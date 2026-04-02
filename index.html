@@ -1,1571 +1,1975 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LevelTube • NEON GRID</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Space+Mono:wght@400;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>07Diaper — Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&family=Nunito:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ── Theme Variables ── */
+:root {
+  --bg: #faf9f7;
+  --bg2: #f3f1ee;
+  --bg3: #ede9e4;
+  --card: #ffffff;
+  --card2: #fdfcfb;
+  --border: rgba(180,165,145,0.25);
+  --border2: rgba(180,165,145,0.4);
+  --text: #3a3530;
+  --text2: #6b5f55;
+  --text3: #9e8f82;
+  --accent: #8b7bb0;
+  --accent2: #b8a9d9;
+  --accent3: #e8e3f4;
+  --green: #7ab89a;
+  --red: #c97b7b;
+  --yellow: #d4a857;
+  --blue: #7a9ec9;
+  --shadow: 0 2px 16px rgba(100,80,60,0.08);
+  --shadow2: 0 4px 32px rgba(100,80,60,0.12);
+  --radius: 16px;
+  --radius2: 10px;
+  --font: 'Quicksand', sans-serif;
+  --mono: 'Space Mono', monospace;
+  --transition: 0.22s cubic-bezier(0.4,0,0.2,1);
+}
 
-  <style>
-    /* ═══════════════════════════════════════════
-       DESIGN TOKENS
-    ═══════════════════════════════════════════ */
-    :root {
-      --c-cyan:        #00f0ff;
-      --c-cyan-dim:    rgba(0, 240, 255, 0.18);
-      --c-cyan-glow:   rgba(0, 240, 255, 0.4);
-      --c-magenta:     #ff00aa;
-      --c-magenta-dim: rgba(255, 0, 170, 0.18);
-      --c-purple:      #9b00ff;
-      --c-purple-dim:  rgba(155, 0, 255, 0.18);
-      --c-green:       #00ff88;
-      --c-green-dim:   rgba(0, 255, 136, 0.18);
-      --c-red:         #ff2244;
+[data-theme="lofi-night"] {
+  --bg: #1a1814;
+  --bg2: #221f1b;
+  --bg3: #2a2620;
+  --card: #252118;
+  --card2: #2d2921;
+  --border: rgba(180,155,100,0.15);
+  --border2: rgba(180,155,100,0.28);
+  --text: #e8ddc8;
+  --text2: #b8a888;
+  --text3: #7a6a50;
+  --accent: #b09ad0;
+  --accent2: #8070a8;
+  --accent3: #2a2040;
+  --green: #7ab89a;
+  --red: #c97b7b;
+  --yellow: #d4a857;
+  --blue: #7a9ec9;
+  --shadow: 0 2px 16px rgba(0,0,0,0.3);
+  --shadow2: 0 4px 32px rgba(0,0,0,0.4);
+}
 
-      --bg-base:       #060810;
-      --bg-surface:    #0d111f;
-      --bg-surface2:   #121828;
-      --bg-surface3:   #161e30;
+[data-theme="sakura"] {
+  --bg: #fdf5f7;
+  --bg2: #f9edf1;
+  --bg3: #f3e0e6;
+  --card: #ffffff;
+  --card2: #fef8fa;
+  --border: rgba(200,150,160,0.25);
+  --border2: rgba(200,150,160,0.4);
+  --text: #3a2530;
+  --text2: #7a4555;
+  --text3: #b08090;
+  --accent: #d4789a;
+  --accent2: #e8a8be;
+  --accent3: #fceef3;
+  --green: #88c9a0;
+  --red: #d47878;
+  --yellow: #d4a857;
+  --blue: #8aadcc;
+  --shadow: 0 2px 16px rgba(180,100,120,0.08);
+  --shadow2: 0 4px 32px rgba(180,100,120,0.13);
+}
 
-      --border:        rgba(0, 240, 255, 0.16);
-      --border-hover:  rgba(0, 240, 255, 0.40);
+[data-theme="ocean"] {
+  --bg: #f4f8fc;
+  --bg2: #eaf2f8;
+  --bg3: #dceef8;
+  --card: #ffffff;
+  --card2: #f8fbfe;
+  --border: rgba(100,150,200,0.22);
+  --border2: rgba(100,150,200,0.38);
+  --text: #252d3a;
+  --text2: #4a6070;
+  --text3: #80a0b5;
+  --accent: #5a9ec8;
+  --accent2: #88bedd;
+  --accent3: #deeef8;
+  --green: #6bbfa8;
+  --red: #d47878;
+  --yellow: #d4a857;
+  --blue: #5a9ec8;
+  --shadow: 0 2px 16px rgba(60,120,180,0.09);
+  --shadow2: 0 4px 32px rgba(60,120,180,0.14);
+}
 
-      --text-primary:  #e2e8f0;
-      --text-secondary:#8899aa;
-      --text-muted:    rgba(255, 255, 255, 0.28);
-      --text-micro:    rgba(255, 255, 255, 0.16);
+[data-theme="matcha"] {
+  --bg: #f5f8f3;
+  --bg2: #edf3e8;
+  --bg3: #e0ecda;
+  --card: #ffffff;
+  --card2: #f8faf6;
+  --border: rgba(100,160,100,0.22);
+  --border2: rgba(100,160,100,0.38);
+  --text: #252d25;
+  --text2: #4a6045;
+  --text3: #80a07a;
+  --accent: #6aaa70;
+  --accent2: #98cc9e;
+  --accent3: #e0f0e2;
+  --green: #6aaa70;
+  --red: #c97b7b;
+  --yellow: #d4a857;
+  --blue: #7a9ec9;
+  --shadow: 0 2px 16px rgba(60,120,60,0.09);
+  --shadow2: 0 4px 32px rgba(60,120,60,0.14);
+}
 
-      --font-body:     'DM Sans', system-ui, sans-serif;
-      --font-cyber:    'Orbitron', sans-serif;
-      --font-mono:     'Space Mono', monospace;
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-      --sidebar-w:     264px;
-      --footer-h:      42px;
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  transition: background var(--transition), color var(--transition);
+  overflow-x: hidden;
+}
 
-      --r-sm:   6px;
-      --r-md:   10px;
-      --r-lg:   14px;
-      --r-pill: 999px;
+/* ── Lofi grain overlay ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.022;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+}
 
-      --shadow-card:   0 0 24px rgba(0,240,255,0.055), 0 4px 16px rgba(0,0,0,0.4);
-      --shadow-glow:   0 0 28px rgba(0,240,255,0.14);
-      --shadow-btn:    0 4px 20px rgba(155,0,255,0.35);
-    }
+/* ── Layout ── */
+.layout {
+  display: flex;
+  min-height: 100vh;
+}
 
-    /* ═══════════════════════════════════════════
-       RESET & BASE
-    ═══════════════════════════════════════════ */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; overflow: hidden; }
+/* ── Sidebar ── */
+.sidebar {
+  width: 240px;
+  min-height: 100vh;
+  background: var(--card);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  left: 0; top: 0; bottom: 0;
+  z-index: 100;
+  box-shadow: var(--shadow);
+  transition: background var(--transition), border var(--transition);
+}
 
-    body {
-      font-family: var(--font-body);
-      font-size: 14px;
-      line-height: 1.5;
-      color: var(--text-primary);
-      background-color: var(--bg-base);
-    }
+.sidebar-logo {
+  padding: 24px 20px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
 
-    a { text-decoration: none; color: inherit; }
-    img { display: block; }
-    button { font-family: inherit; cursor: pointer; border: none; background: none; }
+.logo-icon {
+  width: 40px; height: 40px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  flex-shrink: 0;
+}
 
-    /* ═══════════════════════════════════════════
-       BACKGROUND LAYERS
-    ═══════════════════════════════════════════ */
-    .bg-grid {
-      position: fixed; inset: 0; z-index: 0; pointer-events: none;
-      background-image:
-        linear-gradient(rgba(0,240,255,0.035) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0,240,255,0.035) 1px, transparent 1px);
-      background-size: 44px 44px;
-    }
-    .bg-glow-tl {
-      position: fixed; top: -180px; left: -180px;
-      width: 520px; height: 520px; z-index: 0; pointer-events: none;
-      background: radial-gradient(circle, rgba(0,240,255,0.07) 0%, transparent 70%);
-    }
-    .bg-glow-br {
-      position: fixed; bottom: -200px; right: -100px;
-      width: 480px; height: 480px; z-index: 0; pointer-events: none;
-      background: radial-gradient(circle, rgba(155,0,255,0.06) 0%, transparent 70%);
-    }
+.logo-text {
+  font-family: var(--font);
+  font-weight: 700;
+  font-size: 17px;
+  color: var(--text);
+  letter-spacing: -0.2px;
+}
 
-    /* ═══════════════════════════════════════════
-       TYPOGRAPHY
-    ═══════════════════════════════════════════ */
-    .font-cyber { font-family: var(--font-cyber); }
-    .font-mono  { font-family: var(--font-mono); }
+.logo-sub {
+  font-size: 11px;
+  color: var(--text3);
+  font-weight: 500;
+}
 
-    .neon-cyan    { color: var(--c-cyan);    text-shadow: 0 0 10px var(--c-cyan),    0 0 28px var(--c-cyan-glow); }
-    .neon-magenta { color: var(--c-magenta); text-shadow: 0 0 10px var(--c-magenta); }
-    .neon-green   { color: var(--c-green);   text-shadow: 0 0 10px var(--c-green); }
-    .neon-purple  { color: var(--c-purple);  text-shadow: 0 0 10px var(--c-purple); }
+.server-selector {
+  margin: 14px 14px 4px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius2);
+  padding: 10px 12px;
+  cursor: pointer;
+  display: flex; align-items: center; gap: 10px;
+  transition: all var(--transition);
+}
+.server-selector:hover { background: var(--bg3); border-color: var(--border2); }
 
-    .text-primary   { color: var(--text-primary); }
-    .text-secondary { color: var(--text-secondary); }
-    .text-muted     { color: var(--text-muted); }
-    .text-micro     { color: var(--text-micro); }
+.server-avatar {
+  width: 30px; height: 30px;
+  background: linear-gradient(135deg, var(--accent), var(--blue));
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
 
-    .tracking-wide   { letter-spacing: 0.07em; }
-    .tracking-wider  { letter-spacing: 0.11em; }
-    .tracking-widest { letter-spacing: 0.15em; }
-    .uppercase       { text-transform: uppercase; }
-    .truncate        { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.server-name {
+  font-size: 13px; font-weight: 600; color: var(--text);
+  flex: 1;
+}
+.server-change { font-size: 10px; color: var(--text3); }
 
-    /* ═══════════════════════════════════════════
-       APP LAYOUT
-    ═══════════════════════════════════════════ */
-    .app-shell {
-      position: relative; z-index: 1;
-      display: flex;
-      height: 100vh;
-    }
+.nav-section {
+  padding: 6px 10px 0;
+}
 
-    /* ── Sidebar ── */
-    .sidebar {
-      width: var(--sidebar-w);
-      min-width: var(--sidebar-w);
-      display: flex;
-      flex-direction: column;
-      background: var(--bg-surface);
-      border-right: 1px solid var(--border);
-      position: relative;
-      z-index: 2;
-    }
+.nav-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text3);
+  padding: 10px 8px 4px;
+}
 
-    .sidebar-logo {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 20px 20px 18px;
-      border-bottom: 1px solid var(--border);
-    }
-    .sidebar-logo-mark {
-      width: 36px; height: 36px;
-      border-radius: var(--r-sm);
-      display: flex; align-items: center; justify-content: center;
-      font-family: var(--font-cyber);
-      font-size: 13px; font-weight: 900;
-      color: var(--c-cyan);
-      background: rgba(0,240,255,0.08);
-      border: 1px solid rgba(0,240,255,0.28);
-      text-shadow: 0 0 10px var(--c-cyan);
-      flex-shrink: 0;
-    }
-    .sidebar-logo-name {
-      font-family: var(--font-cyber);
-      font-size: 17px; font-weight: 800;
-      letter-spacing: -0.02em;
-      color: var(--c-cyan);
-      text-shadow: 0 0 10px var(--c-cyan), 0 0 28px var(--c-cyan-glow);
-      line-height: 1;
-    }
-    .sidebar-logo-ver {
-      font-family: var(--font-mono);
-      font-size: 9px;
-      color: var(--text-micro);
-      letter-spacing: 0.12em;
-      margin-top: 4px;
-    }
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--text2);
+  transition: all var(--transition);
+  margin-bottom: 1px;
+}
 
-    .sidebar-nav {
-      flex: 1;
-      padding: 14px 12px;
-      overflow-y: auto;
-    }
-    .sidebar-nav::-webkit-scrollbar { width: 2px; }
-    .sidebar-nav::-webkit-scrollbar-thumb { background: var(--border); }
+.nav-item:hover { background: var(--bg2); color: var(--text); }
+.nav-item.active { background: var(--accent3); color: var(--accent); font-weight: 600; }
+.nav-item .icon { font-size: 15px; width: 20px; text-align: center; flex-shrink: 0; }
 
-    .nav-group-label {
-      font-family: var(--font-mono);
-      font-size: 9px;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--text-micro);
-      padding: 0 6px;
-      margin-bottom: 5px;
-      margin-top: 14px;
-    }
-    .nav-item {
-      display: flex;
-      align-items: center;
-      gap: 11px;
-      padding: 9px 13px;
-      border-radius: var(--r-md);
-      font-size: 11px;
-      font-weight: 500;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--text-secondary);
-      border: 1px solid transparent;
-      transition: background 0.18s, color 0.18s, border-color 0.18s;
-      cursor: pointer;
-    }
-    .nav-item:hover {
-      background: var(--bg-surface2);
-      color: var(--c-cyan);
-    }
-    .nav-item.active {
-      background: rgba(0,240,255,0.07);
-      border-color: rgba(0,240,255,0.26);
-      color: var(--c-cyan);
-    }
-    .nav-icon { width: 15px; text-align: center; font-size: 12px; flex-shrink: 0; }
+.sidebar-bottom {
+  margin-top: auto;
+  padding: 14px;
+  border-top: 1px solid var(--border);
+}
 
-    .sidebar-bottom {
-      padding: 14px 14px 12px;
-      border-top: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
+.theme-row {
+  margin-bottom: 10px;
+}
 
-    /* ── Main column ── */
-    .main-col {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      min-width: 0;
-    }
+.theme-label {
+  font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1px;
+  color: var(--text3); margin-bottom: 7px;
+}
 
-    /* ── Top bar ── */
-    .topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 28px;
-      height: 74px;
-      background: var(--bg-surface);
-      border-bottom: 1px solid var(--border);
-      flex-shrink: 0;
-      gap: 16px;
-    }
-    .topbar-left  { display: flex; align-items: center; gap: 20px; }
-    .topbar-right { display: flex; align-items: center; gap: 8px; }
+.theme-swatches {
+  display: flex; gap: 6px;
+}
 
-    .topbar-eyebrow {
-      font-family: var(--font-mono);
-      font-size: 9px;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin-bottom: 2px;
-    }
-    .topbar-level-row {
-      display: flex;
-      align-items: baseline;
-      gap: 6px;
-    }
-    .topbar-level-num {
-      font-family: var(--font-cyber);
-      font-size: 44px;
-      font-weight: 900;
-      line-height: 1;
-      color: var(--c-cyan);
-      text-shadow: 0 0 12px var(--c-cyan), 0 0 32px var(--c-cyan-glow);
-    }
-    .topbar-level-max {
-      font-family: var(--font-cyber);
-      font-size: 18px;
-      font-weight: 700;
-      color: rgba(0,240,255,0.32);
-    }
-    .topbar-level-sub {
-      font-family: var(--font-mono);
-      font-size: 9px;
-      letter-spacing: 0.1em;
-      color: var(--text-muted);
-      margin-top: 1px;
-    }
+.swatch {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.2s;
+  position: relative;
+}
+.swatch:hover { transform: scale(1.15); }
+.swatch.active { border-color: var(--text); }
+.swatch[data-theme="default"] { background: linear-gradient(135deg, #faf9f7, #8b7bb0); }
+.swatch[data-theme="lofi-night"] { background: linear-gradient(135deg, #1a1814, #b09ad0); }
+.swatch[data-theme="sakura"] { background: linear-gradient(135deg, #fdf5f7, #d4789a); }
+.swatch[data-theme="ocean"] { background: linear-gradient(135deg, #f4f8fc, #5a9ec8); }
+.swatch[data-theme="matcha"] { background: linear-gradient(135deg, #f5f8f3, #6aaa70); }
 
-    /* ── Content area ── */
-    .content-area {
-      flex: 1;
-      overflow-y: auto;
-      padding: 26px 28px 16px;
-    }
-    .content-area::-webkit-scrollbar { width: 3px; }
-    .content-area::-webkit-scrollbar-track { background: transparent; }
-    .content-area::-webkit-scrollbar-thumb { background: rgba(0,240,255,0.18); border-radius: 99px; }
+.user-pill {
+  display: flex; align-items: center; gap: 9px;
+  padding: 8px 10px;
+  background: var(--bg2);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
 
-    /* ═══════════════════════════════════════════
-       FOOTER — "Powered by Cyanix via NixAi"
-    ═══════════════════════════════════════════ */
-    .app-footer {
-      height: var(--footer-h);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      padding: 0 20px;
-      background: var(--bg-surface);
-      border-top: 1px solid var(--border);
-      flex-shrink: 0;
-    }
+.user-avi {
+  width: 28px; height: 28px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px;
+}
 
-    .footer-dot {
-      width: 4px; height: 4px;
-      border-radius: 50%;
-      background: var(--c-cyan);
-      box-shadow: 0 0 6px var(--c-cyan);
-      animation: pulse-dot 2.2s ease-in-out infinite;
-      flex-shrink: 0;
-    }
-    @keyframes pulse-dot {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50%       { opacity: 0.3; transform: scale(0.7); }
-    }
+.user-name { font-size: 12.5px; font-weight: 600; color: var(--text); }
+.user-role { font-size: 10px; color: var(--text3); }
 
-    .footer-sep {
-      width: 1px; height: 12px;
-      background: var(--border);
-      flex-shrink: 0;
-    }
+/* ── Main Content ── */
+.main {
+  margin-left: 240px;
+  flex: 1;
+  min-height: 100vh;
+  background: var(--bg);
+}
 
-    .footer-text {
-      font-family: var(--font-mono);
-      font-size: 9px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-    }
+.topbar {
+  height: 60px;
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center;
+  padding: 0 28px;
+  gap: 14px;
+  position: sticky; top: 0; z-index: 50;
+  box-shadow: 0 1px 8px rgba(0,0,0,0.04);
+  transition: background var(--transition);
+}
 
-    .footer-cyanix {
-      font-family: var(--font-cyber);
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      background: linear-gradient(120deg, var(--c-cyan), var(--c-purple));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
+.topbar-title {
+  font-size: 16px; font-weight: 700; color: var(--text);
+  flex: 1;
+}
 
-    .footer-nixai {
-      font-family: var(--font-cyber);
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      color: var(--c-magenta);
-      text-shadow: 0 0 8px var(--c-magenta);
-    }
+.topbar-badge {
+  background: var(--accent3);
+  color: var(--accent);
+  font-size: 11px; font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+  border: 1px solid var(--accent2);
+}
 
-    .footer-ver {
-      font-family: var(--font-mono);
-      font-size: 9px;
-      color: var(--text-micro);
-      letter-spacing: 0.08em;
-    }
+.topbar-btn {
+  padding: 7px 16px;
+  background: var(--accent);
+  color: white;
+  border: none; border-radius: var(--radius2);
+  font-family: var(--font);
+  font-size: 13px; font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.topbar-btn:hover { opacity: 0.88; transform: translateY(-1px); }
 
-    /* ═══════════════════════════════════════════
-       CARDS
-    ═══════════════════════════════════════════ */
-    .card {
-      background: var(--bg-surface);
-      border: 1px solid var(--border);
-      border-radius: var(--r-lg);
-      box-shadow: var(--shadow-card);
-      position: relative;
-      overflow: hidden;
-      transition: border-color 0.25s, box-shadow 0.25s;
-    }
-    .card:hover {
-      border-color: var(--border-hover);
-      box-shadow: var(--shadow-glow);
-    }
-    .card::before {
-      content: '';
-      position: absolute; top: 0; left: 0; right: 0; height: 1px;
-      background: linear-gradient(90deg, transparent, var(--c-cyan), transparent);
-      opacity: 0.45;
-    }
-    .card-p  { padding: 18px; }
-    .card-pl { padding: 24px; }
+.content {
+  padding: 28px;
+  max-width: 960px;
+}
 
-    /* Corner brackets */
-    .cx { position: absolute; width: 9px; height: 9px; z-index: 3; }
-    .cx-tl { top: 6px;    left: 6px;    border-top:    1.5px solid var(--c-cyan); border-left:   1.5px solid var(--c-cyan); }
-    .cx-tr { top: 6px;    right: 6px;   border-top:    1.5px solid var(--c-cyan); border-right:  1.5px solid var(--c-cyan); }
-    .cx-bl { bottom: 6px; left: 6px;    border-bottom: 1.5px solid var(--c-cyan); border-left:   1.5px solid var(--c-cyan); }
-    .cx-br { bottom: 6px; right: 6px;   border-bottom: 1.5px solid var(--c-cyan); border-right:  1.5px solid var(--c-cyan); }
+/* ── Pages ── */
+.page { display: none; }
+.page.active { display: block; }
 
-    /* ═══════════════════════════════════════════
-       STAT CARDS
-    ═══════════════════════════════════════════ */
-    .stat-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
-      margin-bottom: 18px;
-    }
+/* ── Cards ── */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px 24px;
+  box-shadow: var(--shadow);
+  transition: background var(--transition), border var(--transition), box-shadow var(--transition);
+  margin-bottom: 18px;
+}
 
-    .stat-card-header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      margin-bottom: 12px;
-    }
-    .stat-label {
-      font-family: var(--font-mono);
-      font-size: 9px;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-    }
-    .stat-icon {
-      width: 30px; height: 30px;
-      border-radius: var(--r-sm);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 11px;
-    }
-    .stat-icon.cyan    { background: rgba(0,240,255,0.09);   border: 1px solid rgba(0,240,255,0.22);   color: var(--c-cyan); }
-    .stat-icon.purple  { background: rgba(155,0,255,0.09);   border: 1px solid rgba(155,0,255,0.22);  color: var(--c-purple); }
-    .stat-icon.magenta { background: rgba(255,0,170,0.09);   border: 1px solid rgba(255,0,170,0.22);  color: var(--c-magenta); }
-    .stat-icon.green   { background: rgba(0,255,136,0.09);   border: 1px solid rgba(0,255,136,0.22);  color: var(--c-green); }
+.card-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 18px;
+}
 
-    .stat-value {
-      font-family: var(--font-cyber);
-      font-size: 26px;
-      font-weight: 800;
-      line-height: 1;
-      margin-bottom: 5px;
-    }
-    .stat-value.cyan    { color: var(--c-cyan);    text-shadow: 0 0 14px var(--c-cyan); }
-    .stat-value.purple  { color: var(--c-purple);  text-shadow: 0 0 14px var(--c-purple); }
-    .stat-value.magenta { color: var(--c-magenta); text-shadow: 0 0 14px var(--c-magenta); }
-    .stat-value.green   { color: var(--c-green);   text-shadow: 0 0 14px var(--c-green); }
+.card-title {
+  font-size: 15px; font-weight: 700; color: var(--text);
+  display: flex; align-items: center; gap: 8px;
+}
 
-    .stat-delta {
-      font-family: var(--font-mono);
-      font-size: 9px;
-      color: var(--text-muted);
-    }
+.card-subtitle {
+  font-size: 12px; color: var(--text3); margin-top: 2px;
+}
 
-    /* ═══════════════════════════════════════════
-       XP BAR
-    ═══════════════════════════════════════════ */
-    .xp-wrap {
-      background: var(--bg-surface2);
-      border: 1px solid var(--border);
-      border-radius: var(--r-md);
-      padding: 12px 14px;
-    }
-    .xp-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 7px;
-    }
-    .xp-label {
-      font-family: var(--font-mono);
-      font-size: 9px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-    }
-    .xp-val {
-      font-family: var(--font-mono);
-      font-size: 9px;
-      color: var(--c-cyan);
-    }
-    .xp-track {
-      height: 4px;
-      background: rgba(255,255,255,0.05);
-      border-radius: var(--r-pill);
-      overflow: hidden;
-      border: 1px solid rgba(0,240,255,0.09);
-    }
-    .xp-fill {
-      height: 100%;
-      border-radius: var(--r-pill);
-      background: linear-gradient(90deg, var(--c-cyan), var(--c-purple));
-      box-shadow: 0 0 7px var(--c-cyan);
-      width: 0%;
-      transition: width 1.4s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-    .xp-lvls {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 5px;
-    }
-    .xp-lvl-text {
-      font-family: var(--font-mono);
-      font-size: 8px;
-      color: var(--text-muted);
-    }
-    .xp-lvl-num { color: var(--c-cyan); }
+/* ── Grid ── */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
 
-    /* ═══════════════════════════════════════════
-       BADGES
-    ═══════════════════════════════════════════ */
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 3px 8px;
-      border-radius: var(--r-pill);
-      font-family: var(--font-mono);
-      font-size: 9px;
-      font-weight: 700;
-      letter-spacing: 0.07em;
-      text-transform: uppercase;
-      border: 1px solid;
-    }
-    .badge.cyan    { color: var(--c-cyan);    border-color: rgba(0,240,255,0.35);    background: rgba(0,240,255,0.07); }
-    .badge.green   { color: var(--c-green);   border-color: rgba(0,255,136,0.35);   background: rgba(0,255,136,0.07); }
-    .badge.magenta { color: var(--c-magenta); border-color: rgba(255,0,170,0.35);   background: rgba(255,0,170,0.07); }
-    .badge.purple  { color: var(--c-purple);  border-color: rgba(155,0,255,0.35);   background: rgba(155,0,255,0.07); }
+/* ── Stat Cards ── */
+.stat-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  box-shadow: var(--shadow);
+  transition: all var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+.stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow2); }
 
-    /* ═══════════════════════════════════════════
-       BUTTONS
-    ═══════════════════════════════════════════ */
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      padding: 8px 18px;
-      border-radius: var(--r-md);
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      transition: all 0.2s;
-      cursor: pointer;
-      border: 1px solid transparent;
-    }
-    .btn:disabled { opacity: 0.35; cursor: not-allowed; pointer-events: none; }
+.stat-icon { font-size: 22px; margin-bottom: 8px; }
+.stat-value { font-size: 26px; font-weight: 700; color: var(--text); font-family: var(--mono); }
+.stat-label { font-size: 12px; color: var(--text3); margin-top: 3px; font-weight: 500; }
 
-    .btn-primary {
-      font-family: var(--font-cyber);
-      background: linear-gradient(135deg, rgba(0,240,255,0.10), rgba(155,0,255,0.10));
-      border-color: rgba(0,240,255,0.42);
-      color: var(--c-cyan);
-    }
-    .btn-primary:hover {
-      background: linear-gradient(135deg, rgba(0,240,255,0.20), rgba(155,0,255,0.20));
-      box-shadow: 0 0 20px rgba(0,240,255,0.20);
-    }
+/* ── Form Elements ── */
+.form-group { margin-bottom: 18px; }
 
-    .btn-connect {
-      font-family: var(--font-cyber);
-      background: linear-gradient(135deg, #cc0033, #7700cc);
-      color: #fff;
-      box-shadow: var(--shadow-btn);
-      padding: 12px 28px;
-      font-size: 12px;
-      border-radius: var(--r-md);
-    }
-    .btn-connect:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 30px rgba(155,0,255,0.55);
-    }
+.form-label {
+  display: block;
+  font-size: 13px; font-weight: 600; color: var(--text2);
+  margin-bottom: 7px;
+}
 
-    .btn-ghost {
-      color: var(--text-muted);
-      font-size: 11px;
-      padding: 5px 8px;
-    }
-    .btn-ghost:hover { color: var(--c-cyan); }
+.form-label small { font-weight: 400; color: var(--text3); margin-left: 5px; }
 
-    /* ═══════════════════════════════════════════
-       USER ROW
-    ═══════════════════════════════════════════ */
-    .user-row {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-    }
-    .user-avatar {
-      width: 32px; height: 32px;
-      border-radius: var(--r-sm);
-      object-fit: cover;
-      border: 1px solid rgba(0,240,255,0.32);
-      flex-shrink: 0;
-    }
-    .user-name {
-      font-size: 12px;
-      font-weight: 600;
-      flex: 1;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-    .user-status {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      font-family: var(--font-mono);
-      font-size: 8px;
-      color: var(--text-muted);
-      letter-spacing: 0.06em;
-      margin-top: 1px;
-    }
-    .status-dot {
-      width: 4px; height: 4px;
-      border-radius: 50%;
-      background: var(--c-green);
-      box-shadow: 0 0 5px var(--c-green);
-      animation: pulse-dot 2.2s ease-in-out infinite;
-    }
+.form-input, .form-select, .form-textarea {
+  width: 100%;
+  padding: 10px 14px;
+  background: var(--bg2);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius2);
+  font-family: var(--font);
+  font-size: 13.5px;
+  color: var(--text);
+  outline: none;
+  transition: all var(--transition);
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  border-color: var(--accent2);
+  background: var(--card);
+  box-shadow: 0 0 0 3px var(--accent3);
+}
+.form-textarea { resize: vertical; min-height: 80px; }
 
-    /* ═══════════════════════════════════════════
-       SYNC BADGE
-    ═══════════════════════════════════════════ */
-    .sync-badge {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 5px 11px;
-      border-radius: var(--r-sm);
-      background: var(--bg-surface2);
-      border: 1px solid rgba(255,255,255,0.06);
-      font-family: var(--font-mono);
-      font-size: 9px;
-      color: var(--text-muted);
-    }
+.form-input::placeholder, .form-textarea::placeholder { color: var(--text3); }
 
-    /* ═══════════════════════════════════════════
-       CHANNEL BANNER
-    ═══════════════════════════════════════════ */
-    .channel-banner {
-      display: flex;
-      align-items: center;
-      gap: 18px;
-      padding: 20px 24px;
-      background: linear-gradient(135deg, rgba(0,240,255,0.04), rgba(155,0,255,0.04));
-      border: 1px solid rgba(0,240,255,0.16);
-      border-radius: var(--r-lg);
-      margin-bottom: 18px;
-      position: relative;
-      overflow: hidden;
-    }
-    .channel-banner::after {
-      content: '';
-      position: absolute; top: -50%; right: -8%;
-      width: 260px; height: 260px;
-      background: radial-gradient(circle, rgba(155,0,255,0.09) 0%, transparent 70%);
-      pointer-events: none;
-    }
-    .ch-avatar {
-      width: 62px; height: 62px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 2px solid var(--c-cyan);
-      box-shadow: 0 0 16px rgba(0,240,255,0.26);
-      flex-shrink: 0;
-    }
-    .ch-info { flex: 1; min-width: 0; }
-    .ch-name-row {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-      margin-bottom: 3px;
-    }
-    .ch-name {
-      font-family: var(--font-cyber);
-      font-size: 17px;
-      font-weight: 800;
-      color: var(--c-cyan);
-      text-shadow: 0 0 10px var(--c-cyan);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .ch-url {
-      font-family: var(--font-mono);
-      font-size: 9px;
-      color: var(--text-muted);
-      letter-spacing: 0.06em;
-      margin-bottom: 7px;
-    }
-    .ch-desc {
-      font-size: 11px;
-      color: var(--text-secondary);
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-      max-width: 560px;
-    }
-    .ch-meta { text-align: right; flex-shrink: 0; }
-    .ch-meta-label {
-      font-family: var(--font-mono);
-      font-size: 8px;
-      letter-spacing: 0.1em;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      margin-bottom: 2px;
-    }
-    .ch-meta-val {
-      font-family: var(--font-mono);
-      font-size: 10px;
-      color: var(--c-cyan);
-    }
+/* ── Toggle ── */
+.toggle-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--border);
+}
+.toggle-row:last-child { border-bottom: none; padding-bottom: 0; }
+.toggle-row:first-child { padding-top: 0; }
 
-    /* ═══════════════════════════════════════════
-       DATA TABLE
-    ═══════════════════════════════════════════ */
-    .data-table { width: 100%; border-collapse: collapse; }
-    .data-table thead th {
-      font-family: var(--font-mono);
-      font-size: 8px;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      padding: 8px 10px;
-      text-align: left;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-      font-weight: 400;
-    }
-    .data-table tbody td {
-      padding: 10px 10px;
-      font-size: 11px;
-      border-bottom: 1px solid rgba(255,255,255,0.03);
-      vertical-align: middle;
-    }
-    .data-table tbody tr:last-child td { border-bottom: none; }
-    .data-table tbody tr:hover td { background: rgba(0,240,255,0.022); }
+.toggle-info { flex: 1; }
+.toggle-title { font-size: 13.5px; font-weight: 600; color: var(--text); }
+.toggle-desc { font-size: 12px; color: var(--text3); margin-top: 2px; }
 
-    /* ═══════════════════════════════════════════
-       MINI BAR
-    ═══════════════════════════════════════════ */
-    .mini-bar {
-      height: 3px;
-      background: rgba(255,255,255,0.05);
-      border-radius: var(--r-pill);
-      overflow: hidden;
-    }
-    .mini-bar-fill {
-      height: 100%;
-      border-radius: var(--r-pill);
-      background: linear-gradient(90deg, var(--c-cyan), var(--c-purple));
-    }
+.toggle {
+  width: 42px; height: 24px;
+  background: var(--bg3);
+  border-radius: 12px;
+  position: relative;
+  cursor: pointer;
+  transition: background var(--transition);
+  flex-shrink: 0;
+  border: 1.5px solid var(--border2);
+}
+.toggle.on { background: var(--accent); border-color: var(--accent); }
+.toggle::after {
+  content: '';
+  width: 18px; height: 18px;
+  background: white;
+  border-radius: 50%;
+  position: absolute;
+  top: 1px; left: 1px;
+  transition: transform var(--transition);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+.toggle.on::after { transform: translateX(18px); }
 
-    /* ═══════════════════════════════════════════
-       ACHIEVEMENTS
-    ═══════════════════════════════════════════ */
-    .ach-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 11px;
-      border-radius: var(--r-md);
-      background: rgba(255,255,255,0.022);
-      border: 1px solid rgba(255,255,255,0.048);
-      transition: border-color 0.2s;
-    }
-    .ach-item:hover { border-color: rgba(0,240,255,0.14); }
-    .ach-icon {
-      width: 30px; height: 30px;
-      border-radius: var(--r-sm);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 11px;
-      flex-shrink: 0;
-    }
-    .ach-icon.on  { background: rgba(0,240,255,0.08); border: 1px solid rgba(0,240,255,0.2);  color: var(--c-cyan); }
-    .ach-icon.off { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); color: rgba(255,255,255,0.16); }
-    .ach-body { flex: 1; min-width: 0; }
-    .ach-title {
-      font-size: 11px; font-weight: 600;
-      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-    }
-    .ach-title.on  { color: var(--text-primary); }
-    .ach-title.off { color: var(--text-muted); }
-    .ach-desc {
-      font-family: var(--font-mono);
-      font-size: 8px;
-      color: var(--text-micro);
-      letter-spacing: 0.05em;
-      margin-top: 1px;
-    }
+/* ── Tag Input ── */
+.tag-container {
+  min-height: 42px;
+  padding: 6px 8px;
+  background: var(--bg2);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius2);
+  display: flex; flex-wrap: wrap; gap: 5px;
+  cursor: text;
+  transition: all var(--transition);
+}
+.tag-container:focus-within {
+  border-color: var(--accent2);
+  background: var(--card);
+  box-shadow: 0 0 0 3px var(--accent3);
+}
 
-    /* ═══════════════════════════════════════════
-       GRIDS
-    ═══════════════════════════════════════════ */
-    .grid-3   { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-    .grid-5-3 { display: grid; grid-template-columns: 3fr 2fr; gap: 14px; }
+.tag {
+  background: var(--accent3);
+  color: var(--accent);
+  border: 1px solid var(--accent2);
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px; font-weight: 600;
+  display: flex; align-items: center; gap: 5px;
+}
+.tag .remove {
+  cursor: pointer; color: var(--accent); font-size: 14px; line-height: 1;
+  opacity: 0.6;
+}
+.tag .remove:hover { opacity: 1; }
 
-    /* ═══════════════════════════════════════════
-       AUTH GATE
-    ═══════════════════════════════════════════ */
-    .auth-gate {
-      position: fixed; inset: 0; z-index: 300;
-      background: rgba(6,8,16,0.97);
-      backdrop-filter: blur(24px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .auth-card {
-      width: 100%; max-width: 410px;
-      margin: 0 14px;
-      padding: 40px 36px 32px;
-      text-align: center;
-    }
-    .auth-logo {
-      font-family: var(--font-cyber);
-      font-size: 42px; font-weight: 900;
-      color: var(--c-cyan);
-      text-shadow: 0 0 14px var(--c-cyan), 0 0 36px var(--c-cyan-glow);
-      margin-bottom: 2px;
-    }
-    .auth-title {
-      font-family: var(--font-cyber);
-      font-size: 19px; font-weight: 800;
-      color: var(--c-cyan);
-      margin-bottom: 3px;
-    }
-    .auth-sub {
-      font-family: var(--font-mono);
-      font-size: 9px; letter-spacing: 0.12em;
-      color: var(--text-muted);
-      margin-bottom: 28px;
-    }
-    .auth-perks {
-      padding: 16px 18px;
-      border-radius: var(--r-md);
-      background: rgba(0,240,255,0.04);
-      border: 1px solid rgba(0,240,255,0.10);
-      margin-bottom: 22px;
-      text-align: left;
-      display: flex; flex-direction: column; gap: 10px;
-    }
-    .auth-perk {
-      display: flex; align-items: center; gap: 11px;
-      font-size: 12px; color: var(--text-secondary);
-    }
-    .auth-perk-ico { width: 18px; text-align: center; font-size: 13px; flex-shrink: 0; }
-    .auth-note {
-      font-family: var(--font-mono);
-      font-size: 8px; letter-spacing: 0.06em;
-      color: var(--text-micro);
-      margin-top: 12px;
-    }
+.tag-input {
+  border: none; outline: none;
+  background: transparent;
+  font-family: var(--font); font-size: 13px;
+  color: var(--text); min-width: 100px;
+  flex: 1;
+}
 
-    /* ═══════════════════════════════════════════
-       TOAST
-    ═══════════════════════════════════════════ */
-    #toast {
-      position: fixed; bottom: 56px; right: 26px; z-index: 9999;
-      padding: 11px 18px;
-      border-radius: var(--r-md);
-      background: var(--bg-surface2);
-      border: 1px solid var(--border);
-      font-family: var(--font-mono);
-      font-size: 10px;
-      box-shadow: 0 8px 28px rgba(0,0,0,0.55);
-      opacity: 0; transform: translateY(14px);
-      transition: opacity 0.3s, transform 0.3s;
-      pointer-events: none;
-    }
-    #toast.show    { opacity: 1; transform: translateY(0); }
-    #toast.success { border-color: rgba(0,255,136,0.42);  color: var(--c-green); }
-    #toast.error   { border-color: rgba(255,34,68,0.42);  color: var(--c-red); }
+/* ── Buttons ── */
+.btn {
+  padding: 9px 20px;
+  border-radius: var(--radius2);
+  font-family: var(--font);
+  font-size: 13.5px; font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition);
+  border: none;
+  display: inline-flex; align-items: center; gap: 7px;
+}
 
-    /* ═══════════════════════════════════════════
-       LOADING
-    ═══════════════════════════════════════════ */
-    .loading-state {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 50%;
-      gap: 14px;
-    }
-    .loading-dots { display: flex; gap: 5px; }
-    .loading-dot {
-      width: 5px; height: 5px; border-radius: 50%;
-      background: var(--c-cyan);
-      animation: dot-blink 1.2s infinite;
-    }
-    .loading-dot:nth-child(2) { animation-delay: 0.2s; }
-    .loading-dot:nth-child(3) { animation-delay: 0.4s; }
-    @keyframes dot-blink { 0%,80%,100%{opacity:0} 40%{opacity:1} }
-    .loading-label {
-      font-family: var(--font-mono);
-      font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
-      color: rgba(0,240,255,0.55);
-    }
+.btn-primary {
+  background: var(--accent);
+  color: white;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+}
+.btn-primary:hover { opacity: 0.88; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(0,0,0,0.16); }
 
-    /* ═══════════════════════════════════════════
-       PLACEHOLDER
-    ═══════════════════════════════════════════ */
-    .placeholder-state {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 70px 0;
-      text-align: center;
-      gap: 10px;
-    }
-    .placeholder-icon {
-      font-family: var(--font-cyber);
-      font-size: 52px; font-weight: 900;
-      color: var(--c-cyan);
-      text-shadow: 0 0 12px var(--c-cyan);
-      opacity: 0.18;
-      margin-bottom: 4px;
-    }
-    .placeholder-title {
-      font-family: var(--font-cyber);
-      font-size: 18px; font-weight: 700;
-      color: rgba(255,255,255,0.26);
-    }
-    .placeholder-sub {
-      font-family: var(--font-mono);
-      font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase;
-      color: var(--text-micro);
-    }
+.btn-ghost {
+  background: var(--bg2);
+  color: var(--text2);
+  border: 1.5px solid var(--border);
+}
+.btn-ghost:hover { background: var(--bg3); color: var(--text); }
 
-    /* ═══════════════════════════════════════════
-       SECTION HEADING
-    ═══════════════════════════════════════════ */
-    .section-heading {
-      font-family: var(--font-cyber);
-      font-size: 11px; font-weight: 700; letter-spacing: 0.10em; text-transform: uppercase;
-      color: var(--c-cyan);
-      text-shadow: 0 0 8px var(--c-cyan);
-      margin-bottom: 14px;
-      display: flex; align-items: center; gap: 10px;
-    }
-    .section-heading::after {
-      content: '';
-      flex: 1; height: 1px;
-      background: linear-gradient(90deg, rgba(0,240,255,0.18), transparent);
-    }
+.btn-danger {
+  background: #fef2f2;
+  color: var(--red);
+  border: 1.5px solid rgba(200,100,100,0.2);
+}
+.btn-danger:hover { background: var(--red); color: white; }
 
-    /* ═══════════════════════════════════════════
-       ANIMATIONS
-    ═══════════════════════════════════════════ */
-    @keyframes glitch {
-      0%,100% { text-shadow: 0 0 12px var(--c-cyan), 0 0 30px var(--c-cyan-glow); }
-      10% { text-shadow: -2px 0 var(--c-magenta), 2px 0 var(--c-cyan); clip-path: inset(10% 0 80% 0); }
-      20% { text-shadow: 2px 0 var(--c-magenta), -2px 0 var(--c-cyan); clip-path: inset(80% 0 0% 0); }
-      30% { clip-path: none; }
-    }
-    .glitch { animation: glitch 5s steps(1) infinite; }
+/* ── Save Bar ── */
+.save-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 18px;
+  background: var(--accent3);
+  border: 1px solid var(--accent2);
+  border-radius: var(--radius);
+  margin-bottom: 18px;
+}
+.save-bar-text { font-size: 13px; font-weight: 600; color: var(--accent); }
+.save-bar-actions { display: flex; gap: 10px; }
 
-    @keyframes fade-up {
-      from { opacity: 0; transform: translateY(16px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    .fade-up { animation: fade-up 0.4s ease forwards; opacity: 0; }
-    .d1 { animation-delay: 0.05s; } .d2 { animation-delay: 0.12s; }
-    .d3 { animation-delay: 0.20s; } .d4 { animation-delay: 0.28s; }
-    .d5 { animation-delay: 0.36s; } .d6 { animation-delay: 0.44s; }
+/* ── Toast ── */
+.toast {
+  position: fixed;
+  bottom: 28px; right: 28px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  box-shadow: var(--shadow2);
+  display: flex; align-items: center; gap: 12px;
+  z-index: 9000;
+  font-size: 13.5px; font-weight: 600;
+  color: var(--text);
+  transform: translateY(80px);
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+  max-width: 320px;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast-icon { font-size: 18px; }
 
-    /* Scanlines */
-    .scanlines { position: relative; }
-    .scanlines::after {
-      content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 200;
-      background: repeating-linear-gradient(to bottom, transparent 0px, transparent 3px, rgba(0,240,255,0.009) 3px, rgba(0,240,255,0.009) 4px);
-    }
+/* ── AI Chat ── */
+.ai-fab {
+  position: fixed;
+  bottom: 28px; right: 28px;
+  width: 52px; height: 52px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  transition: all var(--transition);
+  z-index: 200;
+  border: none;
+}
+.ai-fab:hover { transform: scale(1.1); box-shadow: 0 6px 28px rgba(0,0,0,0.25); }
 
-    /* Views */
-    .view { display: none; }
-    .view.active { display: block; }
+.ai-panel {
+  position: fixed;
+  bottom: 92px; right: 28px;
+  width: 340px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow2);
+  display: flex; flex-direction: column;
+  z-index: 200;
+  overflow: hidden;
+  max-height: 520px;
+  transform: scale(0.92) translateY(20px);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
+  transform-origin: bottom right;
+}
+.ai-panel.open {
+  transform: scale(1) translateY(0);
+  opacity: 1;
+  pointer-events: all;
+}
 
-    /* Video thumbnail */
-    .vthumb {
-      width: 44px; height: 28px;
-      border-radius: 3px; object-fit: cover; flex-shrink: 0;
-      border: 1px solid rgba(0,240,255,0.16);
-    }
-  </style>
+.ai-header {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px;
+  background: linear-gradient(135deg, var(--accent3), var(--bg2));
+}
+.ai-avatar {
+  width: 34px; height: 34px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+}
+.ai-name { font-size: 14px; font-weight: 700; color: var(--text); }
+.ai-status { font-size: 11px; color: var(--green); font-weight: 500; }
+.ai-close {
+  margin-left: auto; cursor: pointer; font-size: 18px;
+  color: var(--text3); line-height: 1;
+  background: none; border: none; padding: 2px;
+}
+
+.ai-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px;
+  display: flex; flex-direction: column;
+  gap: 10px;
+  min-height: 200px;
+  max-height: 320px;
+}
+
+.ai-msg {
+  max-width: 88%;
+  padding: 10px 13px;
+  border-radius: 14px;
+  font-size: 13px; line-height: 1.55;
+  font-weight: 500;
+}
+.ai-msg.bot {
+  background: var(--bg2);
+  color: var(--text);
+  border-radius: 14px 14px 14px 3px;
+  align-self: flex-start;
+  border: 1px solid var(--border);
+}
+.ai-msg.user {
+  background: var(--accent);
+  color: white;
+  border-radius: 14px 14px 3px 14px;
+  align-self: flex-end;
+}
+
+.ai-input-row {
+  padding: 12px 14px;
+  border-top: 1px solid var(--border);
+  display: flex; gap: 8px;
+  background: var(--bg2);
+}
+.ai-input {
+  flex: 1;
+  padding: 9px 12px;
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  font-family: var(--font); font-size: 13px;
+  color: var(--text); outline: none;
+  transition: all var(--transition);
+}
+.ai-input:focus { border-color: var(--accent2); box-shadow: 0 0 0 3px var(--accent3); }
+.ai-input::placeholder { color: var(--text3); }
+
+.ai-send {
+  width: 36px; height: 36px;
+  background: var(--accent);
+  border: none; border-radius: 50%;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; color: white;
+  transition: all var(--transition);
+}
+.ai-send:hover { opacity: 0.85; transform: scale(1.05); }
+
+/* ── Overview Page ── */
+.welcome-banner {
+  background: linear-gradient(135deg, var(--accent3) 0%, var(--bg2) 100%);
+  border: 1px solid var(--accent2);
+  border-radius: var(--radius);
+  padding: 22px 26px;
+  margin-bottom: 22px;
+  display: flex; align-items: center; gap: 18px;
+}
+.welcome-icon { font-size: 36px; }
+.welcome-title { font-size: 18px; font-weight: 700; color: var(--text); }
+.welcome-sub { font-size: 13px; color: var(--text2); margin-top: 4px; }
+
+/* ── Command List ── */
+.cmd-list { display: flex; flex-direction: column; gap: 2px; }
+.cmd-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 9px 12px;
+  border-radius: var(--radius2);
+  transition: background var(--transition);
+}
+.cmd-item:hover { background: var(--bg2); }
+.cmd-badge {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  background: var(--bg3);
+  color: var(--accent);
+  padding: 2px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+  min-width: 100px;
+  text-align: center;
+}
+.cmd-desc { font-size: 12.5px; color: var(--text2); }
+
+/* ── Channel/Role Picker ── */
+.channel-select {
+  display: flex; align-items: center; gap: 8px;
+}
+.channel-prefix {
+  color: var(--text3); font-size: 15px; font-weight: 600;
+  flex-shrink: 0;
+}
+
+/* ── Tabs ── */
+.tabs {
+  display: flex; gap: 4px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 20px;
+}
+
+.tab {
+  padding: 9px 16px;
+  font-size: 13px; font-weight: 600;
+  color: var(--text3);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: all var(--transition);
+}
+.tab:hover { color: var(--text2); }
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 10px; }
+
+/* ── Misc ── */
+.divider { height: 1px; background: var(--border); margin: 4px 0; }
+.color-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 5px; }
+.green { color: var(--green); }
+.red { color: var(--red); }
+.yellow { color: var(--yellow); }
+
+.section-title {
+  font-size: 12px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.8px;
+  color: var(--text3);
+  margin-bottom: 12px;
+}
+
+.inline-group {
+  display: flex; gap: 10px; align-items: center;
+}
+</style>
 </head>
-<body>
+<body data-theme="default">
 
-<!-- Background -->
-<div class="bg-grid"></div>
-<div class="bg-glow-tl"></div>
-<div class="bg-glow-br"></div>
-
-<!-- Toast -->
-<div id="toast"></div>
-
-<!-- ═══════════════ AUTH GATE ═══════════════ -->
-<div class="auth-gate" id="authGate">
-  <div class="card auth-card">
-    <span class="cx cx-tl"></span><span class="cx cx-tr"></span>
-    <span class="cx cx-bl"></span><span class="cx cx-br"></span>
-
-    <div class="auth-logo glitch">LT</div>
-    <div class="auth-title">LEVELTUBE</div>
-    <div class="auth-sub">NEON GRID v0.4 &nbsp;•&nbsp; CREATOR DASHBOARD</div>
-
-    <div class="auth-perks">
-      <div class="auth-perk">
-        <span class="auth-perk-ico neon-cyan"><i class="fab fa-youtube"></i></span>
-        <span>Connects directly to your YouTube channel</span>
-      </div>
-      <div class="auth-perk">
-        <span class="auth-perk-ico neon-green"><i class="fas fa-chart-line"></i></span>
-        <span>Live stats — subscribers, views, videos</span>
-      </div>
-      <div class="auth-perk">
-        <span class="auth-perk-ico neon-purple"><i class="fas fa-shield-alt"></i></span>
-        <span>Secured via Google OAuth 2.0</span>
-      </div>
-    </div>
-
-    <button class="btn btn-connect" id="connectBtn" onclick="connectYouTube()" style="width:100%;justify-content:center;">
-      <i class="fab fa-google"></i>
-      <span>SIGN IN WITH GOOGLE</span>
-    </button>
-    <div class="auth-note">Read-only YouTube access &nbsp;•&nbsp; We never post on your behalf</div>
-  </div>
-</div>
-
-<!-- ═══════════════ APP SHELL ═══════════════ -->
-<div class="app-shell">
-
-  <!-- SIDEBAR -->
-  <aside class="sidebar scanlines">
+<div class="layout">
+  <!-- ── Sidebar ── -->
+  <aside class="sidebar">
     <div class="sidebar-logo">
-      <div class="sidebar-logo-mark">LT</div>
+      <div class="logo-icon">🔨</div>
       <div>
-        <div class="sidebar-logo-name">LEVELTUBE</div>
-        <div class="sidebar-logo-ver">NEON GRID v0.4</div>
+        <div class="logo-text">07Diaper</div>
+        <div class="logo-sub">Bot Dashboard</div>
       </div>
     </div>
 
-    <nav class="sidebar-nav">
-      <div class="nav-group-label">Navigation</div>
-      <a class="nav-item active" id="nav-dashboard" href="#" onclick="return showView('dashboard')">
-        <span class="nav-icon"><i class="fas fa-tachometer-alt"></i></span><span>Dashboard</span>
-      </a>
-      <a class="nav-item" id="nav-videos" href="#" onclick="return showView('videos')">
-        <span class="nav-icon"><i class="fas fa-film"></i></span><span>Video Analytics</span>
-      </a>
-      <a class="nav-item" id="nav-audience" href="#" onclick="return showView('audience')">
-        <span class="nav-icon"><i class="fas fa-users"></i></span><span>Audience</span>
-      </a>
+    <div class="server-selector" id="server-selector" onclick="openGuildPicker()">
+      <div class="server-avatar" id="server-avatar">🔒</div>
+      <div>
+        <div class="server-name" id="server-name">Connect Discord</div>
+        <div class="server-change" id="server-change">click to login</div>
+      </div>
+      <span style="color:var(--text3);font-size:12px;">▾</span>
+    </div>
 
-      <div class="nav-group-label">System</div>
-      <a class="nav-item" href="#">
-        <span class="nav-icon"><i class="fas fa-cog"></i></span><span>Settings</span>
-      </a>
-    </nav>
+    <div class="nav-section" style="flex:1;overflow-y:auto;">
+      <div class="nav-label">Overview</div>
+      <div class="nav-item active" data-page="overview" onclick="goPage(this)">
+        <span class="icon">🏠</span> Overview
+      </div>
+
+      <div class="nav-label">Configuration</div>
+      <div class="nav-item" data-page="general" onclick="goPage(this)">
+        <span class="icon">⚙️</span> General
+      </div>
+      <div class="nav-item" data-page="moderation" onclick="goPage(this)">
+        <span class="icon">🔨</span> Moderation
+      </div>
+      <div class="nav-item" data-page="automod" onclick="goPage(this)">
+        <span class="icon">🤖</span> Auto-Mod
+      </div>
+      <div class="nav-item" data-page="welcome" onclick="goPage(this)">
+        <span class="icon">👋</span> Welcome
+      </div>
+      <div class="nav-item" data-page="roles" onclick="goPage(this)">
+        <span class="icon">🎭</span> Roles
+      </div>
+      <div class="nav-item" data-page="logs" onclick="goPage(this)">
+        <span class="icon">📋</span> Logs
+      </div>
+      <div class="nav-item" data-page="sharedmod" onclick="goPage(this)">
+        <span class="icon">🛡️</span> Shared Mod
+      </div>
+      <div class="nav-item" data-page="warnings" onclick="goPage(this)">
+        <span class="icon">⚠️</span> Warnings
+      </div>
+
+      <div class="nav-label">Extras</div>
+      <div class="nav-item" data-page="ai" onclick="goPage(this)">
+        <span class="icon">🧠</span> AI Settings
+      </div>
+      <div class="nav-item" data-page="commands" onclick="goPage(this)">
+        <span class="icon">📖</span> Commands
+      </div>
+    </div>
 
     <div class="sidebar-bottom">
-      <!-- XP Panel -->
-      <div class="xp-wrap" id="xpPanel" style="display:none;">
-        <div class="xp-top">
-          <span class="xp-label">Creator XP</span>
-          <span class="xp-val" id="xpText">0 / 10000</span>
-        </div>
-        <div class="xp-track"><div class="xp-fill" id="xpFill"></div></div>
-        <div class="xp-lvls">
-          <span class="xp-lvl-text">LVL <span class="xp-lvl-num" id="sideLevel">1</span></span>
-          <span class="xp-lvl-text">NEXT: LVL <span class="xp-lvl-num" id="sideNextLevel">2</span></span>
+      <div class="theme-row">
+        <div class="theme-label">Theme</div>
+        <div class="theme-swatches">
+          <div class="swatch active" data-theme="default" title="Lofi White" onclick="setTheme(this)"></div>
+          <div class="swatch" data-theme="lofi-night" title="Lofi Night" onclick="setTheme(this)"></div>
+          <div class="swatch" data-theme="sakura" title="Sakura" onclick="setTheme(this)"></div>
+          <div class="swatch" data-theme="ocean" title="Ocean" onclick="setTheme(this)"></div>
+          <div class="swatch" data-theme="matcha" title="Matcha" onclick="setTheme(this)"></div>
         </div>
       </div>
-
-      <!-- User -->
-      <div class="user-row" id="userInfo" style="display:none;">
-        <img class="user-avatar" id="userAvatar" src="" alt=""
-             onerror="this.src='data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'32\' height=\'32\'><rect width=\'32\' height=\'32\' fill=\'%230d111f\'/><text x=\'16\' y=\'21\' text-anchor=\'middle\' fill=\'%2300f0ff\' font-size=\'13\'>?</text></svg>'">
-        <div style="flex:1;min-width:0;">
-          <div class="user-name" id="userName"></div>
-          <div class="user-status"><span class="status-dot"></span><span>Online</span></div>
+      <div class="user-pill" id="user-pill" onclick="handleUserPillClick()" style="cursor:pointer;" title="Click to logout">
+        <div class="user-avi" id="user-avi">👤</div>
+        <div>
+          <div class="user-name" id="user-name">Not logged in</div>
+          <div class="user-role" id="user-role">Click server above ↑</div>
         </div>
-        <button class="btn btn-ghost" onclick="signOut()" title="Sign Out"><i class="fas fa-sign-out-alt"></i></button>
       </div>
     </div>
   </aside>
 
-  <!-- MAIN COLUMN -->
-  <div class="main-col">
+  <!-- ── Main ── -->
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-title" id="page-title">Overview</div>
+      <div class="topbar-badge" id="page-badge">—</div>
+      <button class="topbar-btn" onclick="saveSettings()">💾 Save Changes</button>
+    </div>
 
-    <!-- TOPBAR -->
-    <header class="topbar">
-      <div class="topbar-left">
-        <div>
-          <div class="topbar-eyebrow">Creator Node &nbsp;•&nbsp; <span id="topViewLabel">Dashboard</span></div>
-          <div class="topbar-level-row">
-            <span class="topbar-level-num glitch" id="mainLevel">--</span>
+    <div class="content">
+
+      <!-- ── OVERVIEW ── -->
+      <div class="page active" id="page-overview">
+        <div class="welcome-banner">
+          <div class="welcome-icon">🔨</div>
+          <div>
+            <div class="welcome-title">Welcome back to 07Diaper Dashboard</div>
+            <div class="welcome-sub">Configure your server's moderation bot. Use the 🤖 AI button to get help anytime.</div>
+          </div>
+        </div>
+
+        <div class="grid-3" style="margin-bottom:18px;">
+          <div class="stat-card">
+            <div class="stat-icon">👥</div>
+            <div class="stat-value">—</div>
+            <div class="stat-label">Total Members</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">⚠️</div>
+            <div class="stat-value">—</div>
+            <div class="stat-label">Active Warnings</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">🛡️</div>
+            <div class="stat-value">—</div>
+            <div class="stat-label">Shared Mods Open</div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">⚡ Quick Status</div>
+                <div class="card-subtitle">Current module states</div>
+              </div>
+            </div>
+            <div class="toggle-row">
+              <div class="toggle-info">
+                <div class="toggle-title">🤖 Auto-Mod</div>
+                <div class="toggle-desc">Spam, links, bad words</div>
+              </div>
+              <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+            </div>
+            <div class="toggle-row">
+              <div class="toggle-info">
+                <div class="toggle-title">👋 Welcome Messages</div>
+                <div class="toggle-desc">Greet new members</div>
+              </div>
+              <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+            </div>
+            <div class="toggle-row">
+              <div class="toggle-info">
+                <div class="toggle-title">🛡️ Shared Moderation</div>
+                <div class="toggle-desc">Claim / donate mods</div>
+              </div>
+              <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+            </div>
+            <div class="toggle-row">
+              <div class="toggle-info">
+                <div class="toggle-title">📋 Mod Logging</div>
+                <div class="toggle-desc">Log all actions</div>
+              </div>
+              <div class="toggle" onclick="this.classList.toggle('on')"></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">📣 Bot Prefix</div>
+                <div class="card-subtitle">Commands trigger</div>
+              </div>
+            </div>
+            <div class="form-group" style="margin-bottom:12px;">
+              <label class="form-label">Command Prefix</label>
+              <input class="form-input" value="?" placeholder="e.g. !, ?, ." style="width:140px;font-family:var(--mono);">
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <label class="form-label">Bot Status</label>
+              <select class="form-select">
+                <option>👁️ Watching your server</option>
+                <option>🎮 Playing with settings</option>
+                <option>🎵 Listening to commands</option>
+                <option>🌐 Watching the web</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── GENERAL ── -->
+      <div class="page" id="page-general">
+        <div class="card">
+          <div class="card-header">
             <div>
-              <span class="topbar-level-max">/ 100</span>
-              <div class="topbar-level-sub">Creator Level</div>
+              <div class="card-title">⚙️ General Settings</div>
+              <div class="card-subtitle">Core bot configuration for your server</div>
+            </div>
+          </div>
+          <div class="grid-2">
+            <div class="form-group">
+              <label class="form-label">Command Prefix</label>
+              <input class="form-input" id="cfg-prefix" value="?" style="font-family:var(--mono);">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Bot Language</label>
+              <select class="form-select">
+                <option>🇬🇧 English</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Log Channel <small>Where mod actions are posted</small></label>
+            <div class="channel-select">
+              <span class="channel-prefix">#</span>
+              <input class="form-input" id="cfg-log-channel" placeholder="mod-logs">
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">Mute Role <small>Applied on ?mute (if not using Discord timeout)</small></label>
+            <div class="channel-select">
+              <span class="channel-prefix">@</span>
+              <input class="form-input" id="cfg-mute-role" placeholder="Muted">
             </div>
           </div>
         </div>
-        <div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;" id="badgeRow"></div>
-      </div>
-      <div class="topbar-right">
-        <div class="sync-badge" id="lastSync"><i class="fas fa-clock"></i><span>Not Synced</span></div>
-        <button class="btn btn-primary" id="fetchBtn" onclick="fetchYouTubeStats()" disabled>
-          <i class="fas fa-bolt"></i><span>Sync Stats</span>
-        </button>
-      </div>
-    </header>
-
-    <!-- CONTENT -->
-    <main class="content-area">
-
-      <div class="loading-state" id="loadingState">
-        <div class="loading-dots">
-          <span class="loading-dot"></span>
-          <span class="loading-dot"></span>
-          <span class="loading-dot"></span>
-        </div>
-        <span class="loading-label">Syncing from YouTube API...</span>
       </div>
 
-      <!-- DASHBOARD -->
-      <div class="view active" id="view-dashboard">
-        <div class="channel-banner fade-up d1" id="channelBanner" style="display:none;">
-          <img class="ch-avatar" id="channelAvatar" src="" alt="">
-          <div class="ch-info">
-            <div class="ch-name-row">
-              <span class="ch-name" id="channelName"></span>
-              <span class="badge green"><i class="fas fa-check-circle"></i> Connected</span>
+      <!-- ── MODERATION ── -->
+      <div class="page" id="page-moderation">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">🔨 Moderation Settings</div>
+              <div class="card-subtitle">Configure kick, ban, mute, purge behaviour</div>
             </div>
-            <div class="ch-url" id="channelCustomUrl"></div>
-            <div class="ch-desc" id="channelDesc"></div>
           </div>
-          <div class="ch-meta">
-            <div class="ch-meta-label">Joined</div>
-            <div class="ch-meta-val" id="channelJoined"></div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-title">DM user on punishment</div>
+              <div class="toggle-desc">Send a DM to users when they're kicked, banned or muted</div>
+            </div>
+            <div class="toggle on" id="cfg-mod-dm" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-title">Log moderation actions</div>
+              <div class="toggle-desc">Post all actions to the log channel</div>
+            </div>
+            <div class="toggle on" id="cfg-mod-log" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-title">Moderators can claim own mods</div>
+              <div class="toggle-desc">Allow mods to claim their own shared moderation records</div>
+            </div>
+            <div class="toggle on" id="cfg-mod-claim-own" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-title">Require reason on all actions</div>
+              <div class="toggle-desc">Force moderators to provide a reason</div>
+            </div>
+            <div class="toggle" id="cfg-mod-require-reason" onclick="this.classList.toggle('on')"></div>
           </div>
         </div>
 
-        <div class="placeholder-state" id="placeholderMsg">
-          <div class="placeholder-icon">LT</div>
-          <div class="placeholder-title">Awaiting Data Link</div>
-          <div class="placeholder-sub">Sign in &amp; click Sync Stats to initialize</div>
-        </div>
-
-        <div class="stat-grid" id="statsGrid" style="display:none;"></div>
-
-        <div class="grid-5-3" id="bottomRow" style="display:none;">
-          <div class="card card-p fade-up d5" id="recentVideosCard">
-            <span class="cx cx-tl"></span><span class="cx cx-tr"></span>
-            <span class="cx cx-bl"></span><span class="cx cx-br"></span>
-            <div class="section-heading">Recent Videos <span class="badge cyan">Top 10</span></div>
-            <table class="data-table">
-              <thead>
-                <tr><th>Title</th><th>Views</th><th>Likes</th><th>Comments</th><th>Reach</th></tr>
-              </thead>
-              <tbody id="videoTableBody"></tbody>
-            </table>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">⏱️ Default Mute Duration</div>
           </div>
-
-          <div class="card card-p fade-up d6" id="achievementsCard">
-            <span class="cx cx-tl"></span><span class="cx cx-tr"></span>
-            <div class="section-heading">Achievements</div>
-            <div id="achievementsList" style="display:flex;flex-direction:column;gap:7px;"></div>
+          <div class="grid-2">
+            <div class="form-group" style="margin-bottom:0;">
+              <label class="form-label">Default Duration <small>Used when no duration given</small></label>
+              <input class="form-input" id="cfg-mute-duration" value="10m" placeholder="e.g. 10m, 2h, 1d" style="font-family:var(--mono);">
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <label class="form-label">Max Purge Amount</label>
+              <input class="form-input" id="cfg-max-purge" type="number" value="1000" style="font-family:var(--mono);">
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- VIDEO ANALYTICS -->
-      <div class="view" id="view-videos">
-        <div class="section-heading" style="font-size:15px;">Video Analytics</div>
-        <div id="videoAnalyticsContent">
-          <p class="text-muted font-mono" style="font-size:10px;">Sync your stats first to view video analytics.</p>
+      <!-- ── AUTO-MOD ── -->
+      <div class="page" id="page-automod">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">🤖 Auto-Mod Settings</div>
+              <div class="card-subtitle">Automatic spam, links and bad word filtering</div>
+            </div>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-title">Enable Auto-Mod</div>
+              <div class="toggle-desc">Master switch for all auto-mod features</div>
+            </div>
+            <div class="toggle on" id="cfg-automod-enabled" onclick="toggleAutomod(this)"></div>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-title">Block Discord Invite Links</div>
+              <div class="toggle-desc">Delete messages with discord.gg/discord.com/invite links</div>
+            </div>
+            <div class="toggle on" id="cfg-automod-block-invites" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-title">Block External URLs</div>
+              <div class="toggle-desc">Delete messages containing any http/https links</div>
+            </div>
+            <div class="toggle" id="cfg-automod-block-urls" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-title">Spam Detection</div>
+              <div class="toggle-desc">Timeout users sending more than 5 messages in 5 seconds</div>
+            </div>
+            <div class="toggle on" id="cfg-automod-spam" onclick="this.classList.toggle('on')"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">🚫 Bad Word List</div>
+              <div class="card-subtitle">Words that trigger an automatic timeout. Press Enter to add.</div>
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom:10px;">
+            <label class="form-label">Blocked Words</label>
+            <div class="tag-container" id="bad-words-container" onclick="document.getElementById('bad-word-input').focus()">
+              <span class="tag">spam <span class="remove" onclick="removeTag(this)">×</span></span>
+              <span class="tag">slur <span class="remove" onclick="removeTag(this)">×</span></span>
+              <input class="tag-input" id="bad-word-input" placeholder="type and press Enter..." onkeydown="addBadWord(event)">
+            </div>
+          </div>
+          <div style="font-size:12px;color:var(--text3);">⚡ Changes apply in real-time on save.</div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">⚙️ Spam Thresholds</div>
+          </div>
+          <div class="grid-2">
+            <div class="form-group" style="margin-bottom:0;">
+              <label class="form-label">Spam Limit <small>messages</small></label>
+              <input class="form-input" id="cfg-spam-limit" type="number" value="5" style="font-family:var(--mono);">
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <label class="form-label">Spam Window <small>seconds</small></label>
+              <input class="form-input" id="cfg-spam-window" type="number" value="5" style="font-family:var(--mono);">
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- AUDIENCE -->
-      <div class="view" id="view-audience">
-        <div class="section-heading" style="font-size:15px;">Audience Intel</div>
-        <div id="audienceContent">
-          <p class="text-muted font-mono" style="font-size:10px;">Sync your stats first to view audience data.</p>
+      <!-- ── WELCOME ── -->
+      <div class="page" id="page-welcome">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">👋 Welcome Settings</div>
+              <div class="card-subtitle">Greet new members and assign auto-roles</div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Welcome Channel</label>
+            <div class="channel-select">
+              <span class="channel-prefix">#</span>
+              <input class="form-input" id="cfg-welcome-channel" placeholder="welcome">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Welcome Message
+              <small>Placeholders: {user} {username} {server} {count}</small>
+            </label>
+            <textarea class="form-textarea" id="cfg-welcome-msg" rows="3" placeholder="👋 Welcome to **{server}**, {user}! You are member **#{count}**.">👋 Welcome to **{server}**, {user}! You are member **#{count}**.</textarea>
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">Auto-Role <small>Assigned to new members on join</small></label>
+            <div class="channel-select">
+              <span class="channel-prefix">@</span>
+              <input class="form-input" id="cfg-welcome-auto-role" placeholder="Members">
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title" style="margin-bottom:14px;">👁️ Preview</div>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;border-left:4px solid var(--green);">
+            <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:5px;">👋 Welcome to My Server!</div>
+            <div style="font-size:13px;color:var(--text2);">👋 Welcome to <strong>My Server</strong>, <span style="color:var(--accent);">@NewMember</span>! You are member <strong>#42</strong>.</div>
+            <div style="display:flex;gap:16px;margin-top:10px;">
+              <div style="font-size:12px;color:var(--text3);">Account Created: 2023-01-01</div>
+              <div style="font-size:12px;color:var(--text3);">Member #: 42</div>
+            </div>
+          </div>
+          <button class="btn btn-ghost" style="margin-top:12px;" onclick="showToast('✅ Test welcome sent to current channel!')">
+            🧪 Send Test Welcome
+          </button>
         </div>
       </div>
 
-    </main>
+      <!-- ── ROLES ── -->
+      <div class="page" id="page-roles">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">🎭 Role Management</div>
+              <div class="card-subtitle">Auto-roles and role assignment commands</div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Auto-Role on Join</label>
+            <div class="channel-select">
+              <span class="channel-prefix">@</span>
+              <input class="form-input" id="cfg-role-autorole" placeholder="Members">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Moderator Role</label>
+            <div class="channel-select">
+              <span class="channel-prefix">@</span>
+              <input class="form-input" id="cfg-role-mod" placeholder="Moderator">
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">Admin Role</label>
+            <div class="channel-select">
+              <span class="channel-prefix">@</span>
+              <input class="form-input" id="cfg-role-admin" placeholder="Admin">
+            </div>
+          </div>
+        </div>
+      </div>
 
-    <!-- ═══════════════ FOOTER ═══════════════ -->
-    <footer class="app-footer">
-      <div class="footer-dot"></div>
-      <span class="footer-text">Powered by</span>
-      <span class="footer-cyanix">Cyanix</span>
-      <div class="footer-sep"></div>
-      <span class="footer-text">via</span>
-      <span class="footer-nixai">NixAi</span>
-      <div class="footer-sep"></div>
-      <span class="footer-ver">NEON GRID v0.4</span>
-    </footer>
+      <!-- ── LOGS ── -->
+      <div class="page" id="page-logs">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">📋 Log Settings</div>
+              <div class="card-subtitle">Where mod actions, joins and bans get posted</div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Moderation Log Channel</label>
+            <div class="channel-select">
+              <span class="channel-prefix">#</span>
+              <input class="form-input" id="cfg-logs-channel" placeholder="mod-logs">
+            </div>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-title">Log Kicks & Bans</div>
+            </div>
+            <div class="toggle on" id="cfg-log-kicks" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-title">Log Mutes & Timeouts</div>
+            </div>
+            <div class="toggle on" id="cfg-log-mutes" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-title">Log Auto-Mod Actions</div>
+            </div>
+            <div class="toggle on" id="cfg-log-automod" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-title">Log Member Joins/Leaves</div>
+            </div>
+            <div class="toggle" id="cfg-log-joins" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-title">Log Message Deletes</div>
+            </div>
+            <div class="toggle" id="cfg-log-deletes" onclick="this.classList.toggle('on')"></div>
+          </div>
+        </div>
+      </div>
 
-  </div><!-- /main-col -->
-</div><!-- /app-shell -->
+      <!-- ── SHARED MOD ── -->
+      <div class="page" id="page-sharedmod">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">🛡️ Shared Moderation</div>
+              <div class="card-subtitle">Allow mods to share, claim and donate moderation actions</div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Shared Mod Channel <small>Where embed cards are posted</small></label>
+            <div class="channel-select">
+              <span class="channel-prefix">#</span>
+              <input class="form-input" id="cfg-sharedmod-channel" placeholder="shared-mod">
+            </div>
+          </div>
+          <div class="divider" style="margin:16px 0;"></div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-title">Mods can claim own actions</div>
+              <div class="toggle-desc">Allow a moderator to claim their own posted moderation</div>
+            </div>
+            <div class="toggle on" id="cfg-sharedmod-claim-own" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-title">Allow donation between mods</div>
+              <div class="toggle-desc">Let moderators donate their mod action credit to others</div>
+            </div>
+            <div class="toggle on" id="cfg-sharedmod-donation" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-title">Auto-post on every mod action</div>
+              <div class="toggle-desc">Automatically create a shared mod card for every kick/ban/mute</div>
+            </div>
+            <div class="toggle on" id="cfg-sharedmod-autopost" onclick="this.classList.toggle('on')"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title" style="margin-bottom:14px;">📊 Shared Mod Stats</div>
+          <div class="grid-3">
+            <div style="text-align:center;padding:14px;background:var(--bg2);border-radius:var(--radius2);border:1px solid var(--border);">
+              <div style="font-size:22px;font-weight:700;font-family:var(--mono);color:var(--text);">—</div>
+              <div style="font-size:11px;color:var(--text3);margin-top:3px;">Open</div>
+            </div>
+            <div style="text-align:center;padding:14px;background:var(--bg2);border-radius:var(--radius2);border:1px solid var(--border);">
+              <div style="font-size:22px;font-weight:700;font-family:var(--mono);color:var(--text);">—</div>
+              <div style="font-size:11px;color:var(--text3);margin-top:3px;">Claimed</div>
+            </div>
+            <div style="text-align:center;padding:14px;background:var(--bg2);border-radius:var(--radius2);border:1px solid var(--border);">
+              <div style="font-size:22px;font-weight:700;font-family:var(--mono);color:var(--text);">—</div>
+              <div style="font-size:11px;color:var(--text3);margin-top:3px;">Donated</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── WARNINGS ── -->
+      <div class="page" id="page-warnings">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">⚠️ Warning System</div>
+              <div class="card-subtitle">Auto-escalation when members accumulate warnings</div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Warning 3 → Action</label>
+            <select class="form-select" id="cfg-warn3-action">
+              <option>⏱️ Mute (10 minutes)</option>
+              <option>⏱️ Mute (1 hour)</option>
+              <option>👢 Kick</option>
+              <option>🚫 Ban</option>
+              <option>Nothing</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Warning 5 → Action</label>
+            <select class="form-select" id="cfg-warn5-action">
+              <option>👢 Kick</option>
+              <option>🚫 Ban</option>
+              <option>⏱️ Mute (1 hour)</option>
+              <option>Nothing</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">Warning 7+ → Action</label>
+            <select class="form-select" id="cfg-warn7-action">
+              <option>🚫 Ban</option>
+              <option>👢 Kick</option>
+              <option>⏱️ Mute (1 day)</option>
+              <option>Nothing</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── AI SETTINGS ── -->
+      <div class="page" id="page-ai">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">🧠 AI / 07Diaper AI</div>
+              <div class="card-subtitle">Configure the bot's AI responses via Groq</div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">AI Model</label>
+            <select class="form-select" id="cfg-ai-model">
+              <option>llama-3.1-8b-instant</option>
+              <option>llama-3.1-70b-versatile</option>
+              <option>mixtral-8x7b-32768</option>
+              <option>gemma-7b-it</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">System Prompt <small>Sets the bot's personality</small></label>
+            <textarea class="form-textarea" id="cfg-ai-prompt" rows="4">You are 07Diaper, a helpful and friendly Discord bot moderator assistant. You help with moderation, answer questions about the server, and keep things running smoothly. Be concise, helpful, and friendly.</textarea>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-title">Respond to @mentions</div>
+              <div class="toggle-desc">Reply with AI when someone mentions the bot</div>
+            </div>
+            <div class="toggle on" id="cfg-ai-mentions" onclick="this.classList.toggle('on')"></div>
+          </div>
+          <div class="toggle-row" style="padding-bottom:0;border-bottom:none;">
+            <div class="toggle-info">
+              <div class="toggle-title">Use AI for warning explanations</div>
+              <div class="toggle-desc">AI generates a personalised warning reason DM</div>
+            </div>
+            <div class="toggle" id="cfg-ai-warnings" onclick="this.classList.toggle('on')"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── COMMANDS ── -->
+      <div class="page" id="page-commands">
+        <div class="tabs">
+          <div class="tab active" onclick="switchTab(this,'tab-mod')">🔨 Moderation</div>
+          <div class="tab" onclick="switchTab(this,'tab-util')">🛠️ Utility</div>
+          <div class="tab" onclick="switchTab(this,'tab-fun')">🎉 Fun</div>
+        </div>
+
+        <div id="tab-mod">
+          <div class="card">
+            <div class="cmd-list">
+              <div class="cmd-item"><span class="cmd-badge">?kick @user</span><span class="cmd-desc">Kick a member from the server</span></div>
+              <div class="cmd-item"><span class="cmd-badge">?ban @user</span><span class="cmd-desc">Permanently ban a member</span></div>
+              <div class="cmd-item"><span class="cmd-badge">?unban ID</span><span class="cmd-desc">Unban a user by ID</span></div>
+              <div class="cmd-item"><span class="cmd-badge">?mute @user 10m</span><span class="cmd-desc">Timeout a member (30s, 10m, 2h, 1d)</span></div>
+              <div class="cmd-item"><span class="cmd-badge">?unmute @user</span><span class="cmd-desc">Remove a member's timeout</span></div>
+              <div class="cmd-item"><span class="cmd-badge">?purge 50</span><span class="cmd-desc">Delete last N messages</span></div>
+              <div class="cmd-item"><span class="cmd-badge">?purge @user</span><span class="cmd-desc">Delete messages from a user</span></div>
+              <div class="cmd-item"><span class="cmd-badge">?warn @user</span><span class="cmd-desc">Issue a formal warning</span></div>
+              <div class="cmd-item"><span class="cmd-badge">?warnings @user</span><span class="cmd-desc">View a member's warnings</span></div>
+              <div class="cmd-item"><span class="cmd-badge">?clearwarns @user</span><span class="cmd-desc">Clear all warnings</span></div>
+              <div class="cmd-item"><span class="cmd-badge">?sharemod @user</span><span class="cmd-desc">Post a shared moderation card</span></div>
+              <div class="cmd-item"><span class="cmd-badge">?modtrack @user</span><span class="cmd-desc">View mod statistics</span></div>
+            </div>
+          </div>
+        </div>
+        <div id="tab-util" style="display:none;">
+          <div class="card">
+            <div class="cmd-list">
+              <div class="cmd-item"><span class="cmd-badge">?setwelcome</span><span class="cmd-desc">Set the welcome channel</span></div>
+              <div class="cmd-item"><span class="cmd-badge">?setwelcomemsg</span><span class="cmd-desc">Set the welcome message text</span></div>
+              <div class="cmd-item"><span class="cmd-badge">?testwelcome</span><span class="cmd-desc">Send a test welcome to yourself</span></div>
+              <div class="cmd-item"><span class="cmd-badge">?automod</span><span class="cmd-desc">View auto-mod settings</span></div>
+              <div class="cmd-item"><span class="cmd-badge">?automod toggle</span><span class="cmd-desc">Enable/disable auto-mod</span></div>
+              <div class="cmd-item"><span class="cmd-badge">?automod addbadword</span><span class="cmd-desc">Add a word to the blocklist</span></div>
+              <div class="cmd-item"><span class="cmd-badge">?setsharedchannel</span><span class="cmd-desc">Set the shared mod channel</span></div>
+              <div class="cmd-item"><span class="cmd-badge">?sharedlist</span><span class="cmd-desc">List shared mod records</span></div>
+              <div class="cmd-item"><span class="cmd-badge">?slowmode 5</span><span class="cmd-desc">Set channel slowmode in seconds</span></div>
+              <div class="cmd-item"><span class="cmd-badge">?logs</span><span class="cmd-desc">View recent mod log</span></div>
+            </div>
+          </div>
+        </div>
+        <div id="tab-fun" style="display:none;">
+          <div class="card">
+            <div class="cmd-list">
+              <div class="cmd-item"><span class="cmd-badge">?8ball</span><span class="cmd-desc">Ask the magic 8-ball</span></div>
+              <div class="cmd-item"><span class="cmd-badge">?coinflip</span><span class="cmd-desc">Flip a coin</span></div>
+              <div class="cmd-item"><span class="cmd-badge">?roll</span><span class="cmd-desc">Roll a dice</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div>
+
+<!-- ── AI Panel ── -->
+<button class="ai-fab" onclick="toggleAI()" title="Ask 07Diaper AI">🤖</button>
+
+<div class="ai-panel" id="ai-panel">
+  <div class="ai-header">
+    <div class="ai-avatar">🤖</div>
+    <div>
+      <div class="ai-name">07Diaper AI</div>
+      <div class="ai-status">● Online</div>
+    </div>
+    <button class="ai-close" onclick="toggleAI()">✕</button>
+  </div>
+  <div class="ai-messages" id="ai-messages">
+    <div class="ai-msg bot">Hey! I'm 07Diaper AI 👋 Ask me anything about configuring your server — auto-mod, welcome messages, shared mod, or any bot setting!</div>
+  </div>
+  <div class="ai-input-row">
+    <input class="ai-input" id="ai-input" placeholder="Ask me anything…" onkeydown="if(event.key==='Enter')sendAI()">
+    <button class="ai-send" onclick="sendAI()">➤</button>
+  </div>
+</div>
+
+<!-- ── Toast ── -->
+<div class="toast" id="toast">
+  <span class="toast-icon" id="toast-icon">✅</span>
+  <span id="toast-msg">Settings saved!</span>
+</div>
 
 <script>
-/* ═══════════════════════════════════════
-   CONFIG
-═══════════════════════════════════════ */
-const SUPABASE_URL  = 'https://hfxagwcwaalrmaqzhyfj.supabase.co';
-const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhmeGFnd2N3YWFscm1hcXpoeWZqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2MzY5NzIsImV4cCI6MjA5MDIxMjk3Mn0.LMFfFRmqW34PT70zAOTj4zsUWmrDl_P4MXL0wZBkxYc';
-const REDIRECT_URL  = 'https://suprosmith-coder.github.io/leveltube';
+// ════════════════════════════════════════════════════════════════════════════
+//  CONFIG — point these at your Supabase project
+// ════════════════════════════════════════════════════════════════════════════
+const SUPABASE_URL      = 'https://hfxagwcwaalrmaqzhyfj.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhmeGFnd2N3YWFscm1hcXpoeWZqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2MzY5NzIsImV4cCI6MjA5MDIxMjk3Mn0.LMFfFRmqW34PT70zAOTj4zsUWmrDl_P4MXL0wZBkxYc';
+const EDGE_FN_URL       = `${SUPABASE_URL}/functions/v1/dashboard`;
 
-const { createClient } = supabase;
-const sb = createClient(SUPABASE_URL, SUPABASE_ANON);
+// ── State ────────────────────────────────────────────────────────────────────
+let AUTH_TOKEN  = localStorage.getItem('07d_token')  || null;
+let GUILD_ID    = localStorage.getItem('07d_guild')  || null;
+let GUILD_NAME  = localStorage.getItem('07d_gname')  || 'My Server';
+let DISCORD_USER = JSON.parse(localStorage.getItem('07d_user') || 'null');
 
-let session    = null;
-let ytToken    = null;
-let videosData = [];
+// ── Helpers ──────────────────────────────────────────────────────────────────
+const getToggle = id => { const e = document.getElementById(id); return e ? e.classList.contains('on') : false; };
+const getVal    = id => { const e = document.getElementById(id); return e ? e.value.trim() : ''; };
+const getSelect = id => { const e = document.getElementById(id); return e ? e.selectedIndex : 0; };
+const setToggle = (id, v) => { const e = document.getElementById(id); if (e) e.classList.toggle('on', !!v); };
+const setVal    = (id, v) => { const e = document.getElementById(id); if (e && v != null) e.value = v; };
+const setSelect = (id, i) => { const e = document.getElementById(id); if (e && i != null) e.selectedIndex = i; };
 
-/* ═══════════════════════════════════════
-   INIT
-═══════════════════════════════════════ */
-async function init() {
-  const { data: { session: s } } = await sb.auth.getSession();
-  if (s) onSession(s);
-  sb.auth.onAuthStateChange((_e, ns) => { if (ns) onSession(ns); });
-}
-
-function onSession(s) {
-  session = s;
-  ytToken = s?.provider_token || null;
-  document.getElementById('authGate').style.display = 'none';
-
-  const meta = s.user.user_metadata || {};
-  document.getElementById('userName').textContent   = meta.full_name || meta.name || s.user.email?.split('@')[0] || 'NETRUNNER';
-  document.getElementById('userAvatar').src         = meta.avatar_url || meta.picture || '';
-  document.getElementById('userInfo').style.display = 'flex';
-  document.getElementById('xpPanel').style.display  = 'block';
-  document.getElementById('fetchBtn').disabled      = false;
-
-  const cached = localStorage.getItem('lt_channel_data');
-  if (cached) { try { renderAll(JSON.parse(cached)); } catch(e){} }
-}
-
-/* ═══════════════════════════════════════
-   AUTH
-═══════════════════════════════════════ */
-async function connectYouTube() {
-  const btn = document.getElementById('connectBtn');
-  btn.disabled = true;
-  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Authorizing...';
-  const { error } = await sb.auth.signInWithOAuth({
-    provider: 'google',
-    options: {
-      redirectTo: REDIRECT_URL,
-      queryParams: {
-        access_type: 'offline', prompt: 'consent',
-        scope: ['openid','email','profile','https://www.googleapis.com/auth/youtube.readonly'].join(' ')
-      }
-    }
+async function apiFetch(path, opts = {}) {
+  const res = await fetch(EDGE_FN_URL + path, {
+    ...opts,
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${AUTH_TOKEN}`, ...(opts.headers || {}) },
   });
-  if (error) {
-    toast('OAuth Error: ' + error.message, 'error');
-    btn.disabled = false;
-    btn.innerHTML = '<i class="fab fa-google"></i> Sign in with Google';
+  if (res.status === 401) { logout(); throw new Error('Unauthorized'); }
+  return res;
+}
+
+// ── Startup: handle OAuth callback ──────────────────────────────────────────
+(function init() {
+  const p = new URLSearchParams(window.location.search);
+  if (p.has('token')) {
+    AUTH_TOKEN  = p.get('token');
+    GUILD_ID    = p.get('guild_id')   || null;
+    GUILD_NAME  = p.get('guild_name') || 'My Server';
+    const rawUser = p.get('user');
+    DISCORD_USER = rawUser ? JSON.parse(decodeURIComponent(rawUser)) : null;
+    localStorage.setItem('07d_token', AUTH_TOKEN);
+    if (GUILD_ID)   localStorage.setItem('07d_guild',  GUILD_ID);
+    if (GUILD_NAME) localStorage.setItem('07d_gname',  GUILD_NAME);
+    if (DISCORD_USER) localStorage.setItem('07d_user', JSON.stringify(DISCORD_USER));
+    history.replaceState({}, '', window.location.pathname);
+  }
+  if (p.has('error')) {
+    showToast('❌ ' + (p.get('error') || 'Auth failed'), '❌');
+    history.replaceState({}, '', window.location.pathname);
+  }
+  updateUI();
+  if (AUTH_TOKEN && GUILD_ID) loadConfig();
+})();
+
+function updateUI() {
+  // User pill
+  if (DISCORD_USER) {
+    document.getElementById('user-name').textContent = DISCORD_USER.username || 'User';
+    document.getElementById('user-role').textContent = DISCORD_USER.discriminator !== '0'
+      ? '#' + DISCORD_USER.discriminator : 'Logged in · click to logout';
+    document.getElementById('user-avi').textContent  = DISCORD_USER.username?.[0]?.toUpperCase() || '👤';
+  } else {
+    document.getElementById('user-name').textContent = 'Not logged in';
+    document.getElementById('user-role').textContent = 'Click server selector ↑';
+  }
+  // Server selector
+  if (GUILD_NAME && GUILD_ID) {
+    document.getElementById('server-name').textContent   = GUILD_NAME;
+    document.getElementById('server-change').textContent = 'click to change';
+    document.getElementById('server-avatar').textContent = '🛡️';
+    document.getElementById('page-badge').textContent    = GUILD_NAME;
+  } else {
+    document.getElementById('server-name').textContent   = 'Connect Discord';
+    document.getElementById('server-change').textContent = 'click to login';
+    document.getElementById('server-avatar').textContent = '🔒';
+    document.getElementById('page-badge').textContent    = '—';
   }
 }
 
-async function signOut() {
-  await sb.auth.signOut();
-  localStorage.removeItem('lt_channel_data');
-  location.reload();
+// ── Discord OAuth ─────────────────────────────────────────────────────────────
+function discordLogin() {
+  const returnTo = encodeURIComponent(window.location.href.split('?')[0]);
+  window.location.href = `${EDGE_FN_URL}/oauth/redirect?return_to=${returnTo}`;
 }
 
-/* ═══════════════════════════════════════
-   FETCH
-═══════════════════════════════════════ */
-async function fetchYouTubeStats() {
-  if (!session) return;
-  const btn = document.getElementById('fetchBtn');
-  btn.disabled = true;
-  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Syncing...';
-  document.getElementById('loadingState').style.display = 'flex';
-  document.getElementById('placeholderMsg').style.display = 'none';
+function logout() {
+  ['07d_token','07d_guild','07d_gname','07d_user'].forEach(k => localStorage.removeItem(k));
+  AUTH_TOKEN = GUILD_ID = GUILD_NAME = DISCORD_USER = null;
+  updateUI();
+  showToast('👋 Logged out');
+}
+
+function handleUserPillClick() {
+  if (AUTH_TOKEN) { if (confirm('Log out of 07Dipper dashboard?')) logout(); }
+  else openGuildPicker();
+}
+
+// ── Guild Picker ──────────────────────────────────────────────────────────────
+async function openGuildPicker() {
+  const overlay = document.getElementById('guild-modal-overlay');
+  overlay.style.display = 'flex';
+  const list   = document.getElementById('guild-list');
+  const prompt = document.getElementById('guild-login-prompt');
+  list.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text3);font-size:13px;">Loading…</div>';
+  prompt.style.display = 'none';
+
+  if (!AUTH_TOKEN) { list.innerHTML = ''; prompt.style.display = 'block'; return; }
 
   try {
-    let data;
-    if (ytToken) {
-      data = await fetchFromYouTubeAPI(ytToken);
+    const res  = await apiFetch('/guilds');
+    if (!res.ok) throw new Error();
+    const { guilds } = await res.json();
+    list.innerHTML = '';
+    if (!guilds.length) {
+      list.innerHTML = '<div style="font-size:13px;color:var(--text3);text-align:center;padding:12px;">No managed servers found with 07Dipper present.</div>';
+      return;
+    }
+    guilds.forEach(g => {
+      const el = document.createElement('div');
+      el.style.cssText = 'display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;cursor:pointer;border:1px solid var(--border);background:var(--bg2);transition:all 0.2s;';
+      el.onmouseenter = () => el.style.background = 'var(--bg3)';
+      el.onmouseleave = () => el.style.background = 'var(--bg2)';
+      el.innerHTML = `<div style="width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:14px;">${g.icon ? `<img src="https://cdn.discordapp.com/icons/${g.id}/${g.icon}.png" style="width:32px;height:32px;border-radius:8px;">` : '🛡️'}</div><div><div style="font-size:13px;font-weight:600;color:var(--text);">${escHtml(g.name)}</div><div style="font-size:11px;color:var(--text3);">${g.id}</div></div>`;
+      el.onclick = () => selectGuild(g.id, g.name);
+      list.appendChild(el);
+    });
+  } catch(e) {
+    list.innerHTML = '<div style="font-size:13px;color:var(--red);text-align:center;padding:12px;">Failed to load servers.</div>';
+  }
+}
+
+function closeGuildPicker() {
+  document.getElementById('guild-modal-overlay').style.display = 'none';
+}
+
+async function selectGuild(id, name) {
+  GUILD_ID   = id;
+  GUILD_NAME = name;
+  localStorage.setItem('07d_guild', id);
+  localStorage.setItem('07d_gname', name);
+  closeGuildPicker();
+  updateUI();
+  await loadConfig();
+}
+
+// ── Collect all form values ───────────────────────────────────────────────────
+function collectConfig() {
+  const badWords = [...document.querySelectorAll('#bad-words-container .tag')]
+    .map(t => t.childNodes[0].textContent.trim()).filter(Boolean);
+  return {
+    prefix:      getVal('cfg-prefix'),
+    log_channel: getVal('cfg-log-channel'),
+    mute_role:   getVal('cfg-mute-role'),
+    mod: {
+      dm_on_punishment:      getToggle('cfg-mod-dm'),
+      log_actions:           getToggle('cfg-mod-log'),
+      mods_claim_own:        getToggle('cfg-mod-claim-own'),
+      require_reason:        getToggle('cfg-mod-require-reason'),
+      default_mute_duration: getVal('cfg-mute-duration'),
+      max_purge:             parseInt(getVal('cfg-max-purge')) || 1000,
+    },
+    automod: {
+      enabled:            getToggle('cfg-automod-enabled'),
+      block_invites:      getToggle('cfg-automod-block-invites'),
+      block_external_urls:getToggle('cfg-automod-block-urls'),
+      spam_detection:     getToggle('cfg-automod-spam'),
+      spam_limit:         parseInt(getVal('cfg-spam-limit'))  || 5,
+      spam_window:        parseInt(getVal('cfg-spam-window')) || 5,
+      bad_words:          badWords,
+    },
+    welcome: {
+      channel:   getVal('cfg-welcome-channel'),
+      message:   getVal('cfg-welcome-msg'),
+      auto_role: getVal('cfg-welcome-auto-role'),
+    },
+    roles: {
+      auto_role: getVal('cfg-role-autorole'),
+      mod_role:  getVal('cfg-role-mod'),
+      admin_role:getVal('cfg-role-admin'),
+    },
+    logs: {
+      channel:      getVal('cfg-logs-channel'),
+      kicks_bans:   getToggle('cfg-log-kicks'),
+      mutes:        getToggle('cfg-log-mutes'),
+      automod:      getToggle('cfg-log-automod'),
+      joins_leaves: getToggle('cfg-log-joins'),
+      deletes:      getToggle('cfg-log-deletes'),
+    },
+    shared_mod: {
+      channel:        getVal('cfg-sharedmod-channel'),
+      claim_own:      getToggle('cfg-sharedmod-claim-own'),
+      allow_donation: getToggle('cfg-sharedmod-donation'),
+      auto_post:      getToggle('cfg-sharedmod-autopost'),
+    },
+    warnings: {
+      warn3_action: getSelect('cfg-warn3-action'),
+      warn5_action: getSelect('cfg-warn5-action'),
+      warn7_action: getSelect('cfg-warn7-action'),
+    },
+    ai: {
+      model:                getVal('cfg-ai-model'),
+      system_prompt:        getVal('cfg-ai-prompt'),
+      respond_to_mentions:  getToggle('cfg-ai-mentions'),
+      use_for_warnings:     getToggle('cfg-ai-warnings'),
+    },
+  };
+}
+
+// ── Apply loaded config to DOM ────────────────────────────────────────────────
+function applyConfig(c) {
+  if (!c) return;
+  setVal('cfg-prefix',      c.prefix);
+  setVal('cfg-log-channel', c.log_channel);
+  setVal('cfg-mute-role',   c.mute_role);
+  if (c.mod) {
+    setToggle('cfg-mod-dm',            c.mod.dm_on_punishment);
+    setToggle('cfg-mod-log',           c.mod.log_actions);
+    setToggle('cfg-mod-claim-own',     c.mod.mods_claim_own);
+    setToggle('cfg-mod-require-reason',c.mod.require_reason);
+    setVal('cfg-mute-duration',        c.mod.default_mute_duration);
+    setVal('cfg-max-purge',            c.mod.max_purge);
+  }
+  if (c.automod) {
+    setToggle('cfg-automod-enabled',      c.automod.enabled);
+    setToggle('cfg-automod-block-invites',c.automod.block_invites);
+    setToggle('cfg-automod-block-urls',   c.automod.block_external_urls);
+    setToggle('cfg-automod-spam',         c.automod.spam_detection);
+    setVal('cfg-spam-limit',              c.automod.spam_limit);
+    setVal('cfg-spam-window',             c.automod.spam_window);
+    if (Array.isArray(c.automod.bad_words)) {
+      const container = document.getElementById('bad-words-container');
+      const input     = document.getElementById('bad-word-input');
+      container.querySelectorAll('.tag').forEach(t => t.remove());
+      c.automod.bad_words.forEach(word => {
+        const tag = document.createElement('span');
+        tag.className = 'tag';
+        tag.innerHTML = `${escHtml(word)} <span class="remove" onclick="removeTag(this)">×</span>`;
+        container.insertBefore(tag, input);
+      });
+    }
+  }
+  if (c.welcome) {
+    setVal('cfg-welcome-channel',  c.welcome.channel);
+    setVal('cfg-welcome-msg',      c.welcome.message);
+    setVal('cfg-welcome-auto-role',c.welcome.auto_role);
+  }
+  if (c.roles) {
+    setVal('cfg-role-autorole', c.roles.auto_role);
+    setVal('cfg-role-mod',      c.roles.mod_role);
+    setVal('cfg-role-admin',    c.roles.admin_role);
+  }
+  if (c.logs) {
+    setVal('cfg-logs-channel',    c.logs.channel);
+    setToggle('cfg-log-kicks',    c.logs.kicks_bans);
+    setToggle('cfg-log-mutes',    c.logs.mutes);
+    setToggle('cfg-log-automod',  c.logs.automod);
+    setToggle('cfg-log-joins',    c.logs.joins_leaves);
+    setToggle('cfg-log-deletes',  c.logs.deletes);
+  }
+  if (c.shared_mod) {
+    setVal('cfg-sharedmod-channel',       c.shared_mod.channel);
+    setToggle('cfg-sharedmod-claim-own',  c.shared_mod.claim_own);
+    setToggle('cfg-sharedmod-donation',   c.shared_mod.allow_donation);
+    setToggle('cfg-sharedmod-autopost',   c.shared_mod.auto_post);
+  }
+  if (c.warnings) {
+    setSelect('cfg-warn3-action', c.warnings.warn3_action);
+    setSelect('cfg-warn5-action', c.warnings.warn5_action);
+    setSelect('cfg-warn7-action', c.warnings.warn7_action);
+  }
+  if (c.ai) {
+    setVal('cfg-ai-model',              c.ai.model);
+    setVal('cfg-ai-prompt',             c.ai.system_prompt);
+    setToggle('cfg-ai-mentions',        c.ai.respond_to_mentions);
+    setToggle('cfg-ai-warnings',        c.ai.use_for_warnings);
+    // Sync select value by text
+    const sel = document.getElementById('cfg-ai-model');
+    if (sel && c.ai.model) {
+      [...sel.options].forEach((o, i) => { if (o.value === c.ai.model || o.text === c.ai.model) sel.selectedIndex = i; });
+    }
+  }
+}
+
+// ── Load config from Supabase Edge Fn ────────────────────────────────────────
+async function loadConfig() {
+  if (!AUTH_TOKEN || !GUILD_ID) return;
+  try {
+    const res = await apiFetch(`/config?guild_id=${GUILD_ID}`);
+    if (!res.ok) { console.warn('loadConfig failed', res.status); return; }
+    const { config } = await res.json();
+    applyConfig(config);
+    showToast('📥 Config loaded for ' + GUILD_NAME);
+  } catch (e) { console.warn('loadConfig error', e); }
+}
+
+// ── Save config to Supabase Edge Fn ──────────────────────────────────────────
+async function saveSettings() {
+  if (!AUTH_TOKEN) {
+    showToast('⚠️ Login with Discord first', '⚠️'); return;
+  }
+  if (!GUILD_ID) {
+    showToast('⚠️ Select a server first', '⚠️'); return;
+  }
+  const btn = document.querySelector('.topbar-btn');
+  btn.textContent = '⏳ Saving…';
+  btn.disabled = true;
+  try {
+    const res = await apiFetch('/config', {
+      method: 'POST',
+      body: JSON.stringify({ guild_id: GUILD_ID, config: collectConfig() }),
+    });
+    if (res.ok) {
+      showToast('✅ Settings saved!');
     } else {
-      const { data: fn, error } = await sb.functions.invoke('fetch-youtube-stats', { body: {} });
-      if (error) throw error;
-      data = fn;
+      const err = await res.json().catch(() => ({}));
+      showToast(`❌ ${err.error || 'Save failed'}`, '❌');
     }
-    localStorage.setItem('lt_channel_data', JSON.stringify(data));
-    localStorage.setItem('lt_sync_time', new Date().toISOString());
-    renderAll(data);
-    toast('Sync Complete', 'success');
-  } catch (err) {
-    console.error(err);
-    toast('Sync failed: ' + err.message, 'error');
+  } catch (e) {
+    showToast('❌ Network error', '❌');
   } finally {
-    document.getElementById('loadingState').style.display = 'none';
+    btn.textContent = '💾 Save Changes';
     btn.disabled = false;
-    btn.innerHTML = '<i class="fas fa-bolt"></i> Sync Stats';
   }
 }
 
-async function fetchFromYouTubeAPI(token) {
-  const h = { Authorization: `Bearer ${token}` };
-  const chRes = await fetch('https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics,brandingSettings,contentDetails&mine=true', { headers: h });
-  if (!chRes.ok) { const e = await chRes.json(); throw new Error(e.error?.message || 'YouTube API error'); }
-  const chJson  = await chRes.json();
-  const channel = chJson.items?.[0];
-  if (!channel) throw new Error('No YouTube channel found for this account.');
+// ── Navigation ────────────────────────────────────────────────────────────────
+function goPage(el) {
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  const pid = el.dataset.page;
+  document.getElementById('page-' + pid).classList.add('active');
+  const titles = {
+    overview:'Overview', general:'General Settings', moderation:'Moderation',
+    automod:'Auto-Mod', welcome:'Welcome', roles:'Roles',
+    logs:'Logs', sharedmod:'Shared Moderation', warnings:'Warnings',
+    ai:'AI Settings', commands:'Commands'
+  };
+  document.getElementById('page-title').textContent = titles[pid] || pid;
+}
 
-  const playlistId = channel.contentDetails?.relatedPlaylists?.uploads;
-  let videos = [];
-  if (playlistId) {
-    const plRes  = await fetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=${playlistId}&maxResults=10`, { headers: h });
-    const plJson = await plRes.json();
-    const ids    = (plJson.items||[]).map(i => i.snippet?.resourceId?.videoId).filter(Boolean);
-    if (ids.length) {
-      const vRes  = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&id=${ids.join(',')}`, { headers: h });
-      const vJson = await vRes.json();
-      videos = vJson.items || [];
+// ── Themes ────────────────────────────────────────────────────────────────────
+function setTheme(el) {
+  document.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
+  el.classList.add('active');
+  const t = el.dataset.theme;
+  if (t === 'default') document.body.removeAttribute('data-theme');
+  else document.body.setAttribute('data-theme', t);
+}
+
+// ── Toast ─────────────────────────────────────────────────────────────────────
+let toastTimer;
+function showToast(msg, icon='✅') {
+  clearTimeout(toastTimer);
+  document.getElementById('toast-msg').textContent  = msg;
+  document.getElementById('toast-icon').textContent = icon;
+  const t = document.getElementById('toast');
+  t.classList.add('show');
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3200);
+}
+
+// ── Tag Input ─────────────────────────────────────────────────────────────────
+function addBadWord(e) {
+  if (e.key !== 'Enter') return;
+  const input = document.getElementById('bad-word-input');
+  const val   = input.value.trim().toLowerCase();
+  if (!val) return;
+  const tag = document.createElement('span');
+  tag.className = 'tag';
+  tag.innerHTML = `${escHtml(val)} <span class="remove" onclick="removeTag(this)">×</span>`;
+  document.getElementById('bad-words-container').insertBefore(tag, input);
+  input.value = '';
+  showToast(`🚫 Added "${val}" to blocklist`);
+}
+function removeTag(el) { el.parentElement.remove(); }
+
+// ── Tabs ──────────────────────────────────────────────────────────────────────
+function switchTab(el, tabId) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  ['tab-mod','tab-util','tab-fun'].forEach(id => {
+    const e = document.getElementById(id);
+    if (e) e.style.display = id === tabId ? 'block' : 'none';
+  });
+}
+
+// ── AI Panel ──────────────────────────────────────────────────────────────────
+let aiOpen = false;
+function toggleAI() {
+  aiOpen = !aiOpen;
+  document.getElementById('ai-panel').classList.toggle('open', aiOpen);
+}
+
+const aiKnowledge = {
+  'automod':'To enable Auto-Mod, go to the **Auto-Mod** page and toggle it on. You can block invite links, external URLs, and add bad words to the blocklist.',
+  'welcome':'Head to the **Welcome** page. Set a channel and customise your message using `{user}`, `{server}`, and `{count}`. Click "Send Test Welcome" to preview.',
+  'shared mod':'Go to **Shared Mod** and set a channel. Mods can use `?sharemod @user action` to post a card others can Claim, Donate, or Leave Open.',
+  'warn':'Use `?warn @user reason`. The **Warnings** page lets you set auto-escalation — e.g. 3 warns → mute, 5 → kick, 7 → ban.',
+  'mute':'Use `?mute @user 10m reason`. Formats: `30s`, `10m`, `2h`, `1d`. Max 28 days.',
+  'log':'Set a log channel on the **Logs** page. All kick, ban, mute and auto-mod actions post there.',
+  'prefix':'Change the command prefix on the **General** page. Default is `?`.',
+  'theme':'Use the colour circles at the bottom of the sidebar: Lofi White, Night, Sakura, Ocean, or Matcha.',
+  'purge':'Use `?purge 50`, `?purge @user`, or `?purge banned`.',
+  'ban':'Use `?ban @user reason` to ban. `?unban USER_ID` to unban.',
+  'role':'Go to **Roles** to set auto-role, moderator role, and admin role.',
+  'ai':'The AI Settings page lets you pick your Groq model and customise the system prompt.',
+  'save':'Click **💾 Save Changes** in the top-right to push all settings to the bot.',
+};
+
+function sendAI() {
+  const input = document.getElementById('ai-input');
+  const msg   = input.value.trim();
+  if (!msg) return;
+  input.value = '';
+  const msgs = document.getElementById('ai-messages');
+  const userDiv = document.createElement('div');
+  userDiv.className = 'ai-msg user';
+  userDiv.textContent = msg;
+  msgs.appendChild(userDiv);
+  const botDiv = document.createElement('div');
+  botDiv.className = 'ai-msg bot';
+  botDiv.textContent = '…';
+  msgs.appendChild(botDiv);
+  msgs.scrollTop = msgs.scrollHeight;
+  setTimeout(() => {
+    const lower = msg.toLowerCase();
+    let reply = "I'm not sure about that setting! Browse the sidebar pages — each has toggles and fields you can configure. Check the **Commands** page for a full list.";
+    for (const [key, val] of Object.entries(aiKnowledge)) {
+      if (lower.includes(key)) { reply = val; break; }
     }
-  }
-  return { channel, videos };
+    if (lower.includes('hello') || lower.includes('hi') || lower.includes('hey'))
+      reply = "Hey! 👋 I'm 07Dipper AI. Ask me how to configure any bot setting!";
+    else if (lower.includes('help'))
+      reply = "I can help with: Auto-Mod, Welcome messages, Shared Mod, Warnings, Logging, Roles, Mutes/Bans, and more. Just ask!";
+    botDiv.innerHTML = reply
+      .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+      .replace(/`(.*?)`/g,`<code style="background:var(--bg3);padding:1px 5px;border-radius:4px;font-family:var(--mono);font-size:11px;">$1</code>`);
+    msgs.scrollTop = msgs.scrollHeight;
+  }, 520);
 }
 
-/* ═══════════════════════════════════════
-   RENDER
-═══════════════════════════════════════ */
-function renderAll({ channel, videos }) {
-  videosData = videos || [];
-  const stats   = channel.statistics || {};
-  const snippet = channel.snippet    || {};
-  const subs   = parseInt(stats.subscriberCount || 0);
-  const views  = parseInt(stats.viewCount       || 0);
-  const vCount = parseInt(stats.videoCount      || 0);
-  const level  = calcLevel(subs, views, vCount);
-  const xp     = calcXP(subs, views, vCount);
+function toggleAutomod(el) { el.classList.toggle('on'); }
 
-  // Topbar
-  document.getElementById('mainLevel').textContent = level;
-
-  // Channel banner
-  document.getElementById('channelAvatar').src            = snippet.thumbnails?.default?.url || '';
-  document.getElementById('channelName').textContent       = snippet.title || '';
-  document.getElementById('channelCustomUrl').textContent  = snippet.customUrl ? `@${snippet.customUrl.replace('@','')}` : '';
-  document.getElementById('channelDesc').textContent       = snippet.description || '';
-  document.getElementById('channelJoined').textContent     = snippet.publishedAt ? new Date(snippet.publishedAt).getFullYear() : '';
-  document.getElementById('channelBanner').style.display  = 'flex';
-
-  // XP
-  const xpCurr = levelXPThreshold(level);
-  const xpNext = levelXPThreshold(level + 1);
-  const xpPct  = Math.min(100, ((xp - xpCurr) / (xpNext - xpCurr)) * 100);
-  document.getElementById('sideLevel').textContent     = level;
-  document.getElementById('sideNextLevel').textContent = level + 1;
-  document.getElementById('xpText').textContent        = `${fmt(xp)} / ${fmt(xpNext)}`;
-  setTimeout(() => { document.getElementById('xpFill').style.width = xpPct + '%'; }, 120);
-
-  // Badges
-  document.getElementById('badgeRow').innerHTML = calcBadges(subs, views, vCount).map(b =>
-    `<span class="badge ${b.color}"><i class="fas fa-${b.icon}"></i> ${b.label}</span>`
-  ).join('');
-
-  // Sync time
-  const t = localStorage.getItem('lt_sync_time');
-  if (t) {
-    document.getElementById('lastSync').innerHTML =
-      `<i class="fas fa-check" style="color:var(--c-green);"></i> <span>${new Date(t).toLocaleTimeString()}</span>`;
-  }
-
-  // Stat grid
-  const grid = document.getElementById('statsGrid');
-  grid.style.display = 'grid';
-  grid.innerHTML = [
-    { label:'Subscribers',   value: fmtBig(subs),    color:'cyan',    icon:'users',  delta:`+${fmtBig(Math.round(subs*0.02))} /mo (est)` },
-    { label:'Total Views',   value: fmtBig(views),   color:'purple',  icon:'eye',    delta:`${fmtBig(Math.round(views/Math.max(1,vCount)))} avg/video` },
-    { label:'Videos',        value: fmt(vCount),      color:'magenta', icon:'film',   delta:'Lifetime uploads' },
-    { label:'Creator Level', value: level,             color:'green',   icon:'star',   delta:`${Math.round(xpPct)}% to LVL ${level+1}` },
-  ].map((s, i) => `
-    <div class="card card-p fade-up d${i+2}">
-      <span class="cx cx-tl"></span><span class="cx cx-tr"></span>
-      <span class="cx cx-bl"></span><span class="cx cx-br"></span>
-      <div class="stat-card-header">
-        <span class="stat-label">${s.label}</span>
-        <span class="stat-icon ${s.color}"><i class="fas fa-${s.icon}"></i></span>
-      </div>
-      <div class="stat-value ${s.color}">${s.value}</div>
-      <div class="stat-delta">${s.delta}</div>
-    </div>
-  `).join('');
-
-  // Video table
-  if (videosData.length) {
-    const maxV = Math.max(...videosData.map(v => parseInt(v.statistics?.viewCount||0)));
-    document.getElementById('videoTableBody').innerHTML = videosData.map(v => {
-      const s  = v.statistics || {};
-      const vv = parseInt(s.viewCount||0);
-      const pct= maxV ? Math.round(vv/maxV*100) : 0;
-      return `<tr>
-        <td><div style="display:flex;align-items:center;gap:7px;">
-          <img src="${v.snippet?.thumbnails?.default?.url||''}" class="vthumb" alt="">
-          <span class="truncate" style="max-width:180px;">${v.snippet?.title||''}</span>
-        </div></td>
-        <td><span class="font-mono neon-cyan" style="font-size:10px;">${fmtBig(vv)}</span>
-          <div class="mini-bar" style="width:64px;margin-top:3px;"><div class="mini-bar-fill" style="width:${pct}%;"></div></div></td>
-        <td><span class="font-mono neon-green" style="font-size:10px;">${fmtBig(parseInt(s.likeCount||0))}</span></td>
-        <td><span class="font-mono text-secondary" style="font-size:10px;">${fmtBig(parseInt(s.commentCount||0))}</span></td>
-        <td><span class="font-mono text-muted" style="font-size:10px;">${pct}%</span></td>
-      </tr>`;
-    }).join('');
-  }
-
-  // Achievements
-  document.getElementById('achievementsList').innerHTML = calcAchievements(subs, views, vCount).map(a => `
-    <div class="ach-item">
-      <div class="ach-icon ${a.unlocked?'on':'off'}"><i class="fas fa-${a.icon}"></i></div>
-      <div class="ach-body">
-        <div class="ach-title ${a.unlocked?'on':'off'}">${a.title}</div>
-        <div class="ach-desc">${a.desc}</div>
-      </div>
-      ${a.unlocked ? '<i class="fas fa-check-circle neon-green" style="font-size:12px;flex-shrink:0;"></i>' : ''}
-    </div>
-  `).join('');
-
-  document.getElementById('bottomRow').style.display = 'grid';
-
-  renderVideoAnalytics(videosData);
-  renderAudienceView(subs, views, vCount);
+// ── Utility ───────────────────────────────────────────────────────────────────
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
-
-function renderVideoAnalytics(videos) {
-  const el = document.getElementById('videoAnalyticsContent');
-  if (!videos.length) { el.innerHTML = '<p class="text-muted font-mono" style="font-size:10px;">No video data.</p>'; return; }
-  const maxV = Math.max(...videos.map(v => parseInt(v.statistics?.viewCount||0)));
-  el.innerHTML = `<div class="card card-p">
-    <span class="cx cx-tl"></span><span class="cx cx-tr"></span>
-    <div class="section-heading">All Recent Videos</div>
-    <table class="data-table">
-      <thead><tr><th>#</th><th>Title</th><th>Published</th><th>Views</th><th>Likes</th><th>Comments</th><th>Engagement</th></tr></thead>
-      <tbody>${videos.map((v,i) => {
-        const s  = v.statistics||{};
-        const vv = parseInt(s.viewCount||0), lk=parseInt(s.likeCount||0), cm=parseInt(s.commentCount||0);
-        const eng= vv?((lk+cm)/vv*100).toFixed(2):'0.00';
-        const pub= v.snippet?.publishedAt?new Date(v.snippet.publishedAt).toLocaleDateString():'';
-        const pct= maxV?Math.round(vv/maxV*100):0;
-        return `<tr>
-          <td class="font-mono text-muted" style="font-size:9px;">${String(i+1).padStart(2,'0')}</td>
-          <td><div style="display:flex;align-items:center;gap:7px;">
-            <img src="${v.snippet?.thumbnails?.default?.url||''}" class="vthumb" alt="">
-            <span class="truncate" style="max-width:190px;">${v.snippet?.title||''}</span>
-          </div></td>
-          <td class="font-mono text-muted" style="font-size:9px;">${pub}</td>
-          <td><span class="font-mono neon-cyan" style="font-size:10px;">${fmtBig(vv)}</span>
-            <div class="mini-bar" style="width:52px;margin-top:3px;"><div class="mini-bar-fill" style="width:${pct}%;"></div></div></td>
-          <td class="font-mono neon-green" style="font-size:10px;">${fmtBig(lk)}</td>
-          <td class="font-mono text-secondary" style="font-size:10px;">${fmtBig(cm)}</td>
-          <td class="font-mono neon-magenta" style="font-size:10px;">${eng}%</td>
-        </tr>`;
-      }).join('')}</tbody>
-    </table>
-  </div>`;
-}
-
-function renderAudienceView(subs, views, vCount) {
-  const avg  = vCount ? Math.round(views/vCount) : 0;
-  const est  = Math.round(avg * Math.max(1, vCount/12));
-  document.getElementById('audienceContent').innerHTML = `
-    <div class="grid-3" style="margin-bottom:14px;">
-      ${[
-        {label:'Total Subscribers', value:fmtBig(subs), color:'cyan'},
-        {label:'Avg Views / Video',  value:fmtBig(avg),  color:'purple'},
-        {label:'Est. Monthly Views', value:fmtBig(est),  color:'green'},
-      ].map(s => `<div class="card card-p">
-        <span class="cx cx-tl"></span><span class="cx cx-tr"></span>
-        <div class="stat-label" style="margin-bottom:10px;">${s.label}</div>
-        <div class="stat-value ${s.color}">${s.value}</div>
-      </div>`).join('')}
-    </div>
-    <div class="card card-p">
-      <span class="cx cx-tl"></span><span class="cx cx-tr"></span>
-      <div class="section-heading">Channel Growth Milestones</div>
-      <div style="display:flex;flex-direction:column;gap:12px;">
-        ${[100,1000,10000,100000,1000000,10000000].map(m => {
-          const reached = subs >= m;
-          const pct = reached ? 100 : Math.min(99, Math.round(subs/m*100));
-          return `<div>
-            <div style="display:flex;justify-content:space-between;margin-bottom:5px;">
-              <span class="font-mono" style="font-size:9px;color:${reached?'var(--c-green)':'var(--text-muted)'};">
-                ${reached?'<i class="fas fa-check" style="margin-right:4px;"></i>':''}${fmtBig(m)} SUBSCRIBERS
-              </span>
-              <span class="font-mono" style="font-size:9px;color:var(--text-muted);">${pct}%</span>
-            </div>
-            <div class="xp-track">
-              <div style="height:100%;border-radius:999px;width:${pct}%;
-                ${reached?'background:var(--c-green);box-shadow:0 0 6px var(--c-green);':'background:linear-gradient(90deg,var(--c-cyan),var(--c-purple));box-shadow:0 0 5px var(--c-cyan);'}
-                transition:width 1.2s cubic-bezier(0.22,1,0.36,1);"></div>
-            </div>
-          </div>`;
-        }).join('')}
-      </div>
-    </div>`;
-}
-
-/* ═══════════════════════════════════════
-   GAMIFICATION
-═══════════════════════════════════════ */
-function calcXP(s,v,c)     { return Math.floor(s*0.5 + v*0.001 + c*10); }
-function levelXPThreshold(l){ return Math.floor(1000*Math.pow(1.5,l-1)); }
-function calcLevel(s,v,c) {
-  const xp = calcXP(s,v,c); let l = 1;
-  while (levelXPThreshold(l+1) <= xp && l < 100) l++;
-  return l;
-}
-function calcBadges(s,v,c) {
-  const b=[];
-  if (s>=1000000) b.push({label:'Silver Play',  icon:'trophy',color:'cyan'});
-  if (s>=100000)  b.push({label:'100K Creator', icon:'star',  color:'purple'});
-  if (s>=10000)   b.push({label:'10K Club',     icon:'users', color:'magenta'});
-  if (c>=100)     b.push({label:'Centurion',    icon:'film',  color:'green'});
-  if (!b.length)  b.push({label:'Rising Star',  icon:'rocket',color:'cyan'});
-  return b.slice(0,3);
-}
-function calcAchievements(s,v,c) {
-  return [
-    {icon:'rocket',    title:'First Subscriber', desc:'Channel created',         unlocked:s>=1},
-    {icon:'users',     title:'100 Subs',          desc:'Growing community',       unlocked:s>=100},
-    {icon:'user-group',title:'1,000 Subs',        desc:'Monetization threshold',  unlocked:s>=1000},
-    {icon:'star',      title:'10K Milestone',     desc:'Established creator',     unlocked:s>=10000},
-    {icon:'eye',       title:'100K Views',        desc:'Breaking out',            unlocked:v>=100000},
-    {icon:'film',      title:'Prolific Creator',  desc:'50+ videos uploaded',     unlocked:c>=50},
-    {icon:'trophy',    title:'100K Subscribers',  desc:'Silver Play Button tier', unlocked:s>=100000},
-    {icon:'crown',     title:'1M Subscribers',    desc:'Gold Play Button tier',   unlocked:s>=1000000},
-  ];
-}
-
-/* ═══════════════════════════════════════
-   NAV
-═══════════════════════════════════════ */
-function showView(name) {
-  document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-  document.getElementById('view-' + name).classList.add('active');
-  const nav = document.getElementById('nav-' + name);
-  if (nav) nav.classList.add('active');
-  document.getElementById('topViewLabel').textContent = name.charAt(0).toUpperCase() + name.slice(1);
-  return false;
-}
-
-/* ═══════════════════════════════════════
-   UTILS
-═══════════════════════════════════════ */
-function fmt(n)    { return Number(n).toLocaleString(); }
-function fmtBig(n) {
-  if (n>=1e9) return (n/1e9).toFixed(1)+'B';
-  if (n>=1e6) return (n/1e6).toFixed(1)+'M';
-  if (n>=1e3) return (n/1e3).toFixed(1)+'K';
-  return String(n);
-}
-let _tt;
-function toast(msg, type='success') {
-  const el = document.getElementById('toast');
-  el.textContent = msg; el.className = `show ${type}`;
-  clearTimeout(_tt);
-  _tt = setTimeout(() => { el.className = type; }, 3200);
-}
-
-init();
 </script>
+
+<!-- ── Guild Picker Modal ── -->
+<div id="guild-modal-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:10000;align-items:center;justify-content:center;">
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;width:340px;box-shadow:var(--shadow2);max-height:80vh;overflow-y:auto;">
+    <div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:6px;">🛡️ Select Server</div>
+    <div style="font-size:12px;color:var(--text3);margin-bottom:18px;">Servers where 07Dipper is present and you have Manage Server permissions.</div>
+    <div id="guild-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+    <div id="guild-login-prompt" style="display:none;text-align:center;padding:12px 0;">
+      <div style="font-size:13px;color:var(--text2);margin-bottom:14px;">Login with Discord to manage your servers.</div>
+      <button class="btn btn-primary" onclick="discordLogin()" style="width:100%;">🔐 Login with Discord</button>
+    </div>
+    <button class="btn btn-ghost" style="width:100%;margin-top:14px;" onclick="closeGuildPicker()">Cancel</button>
+  </div>
+</div>
+
 </body>
 </html>
